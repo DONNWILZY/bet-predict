@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@radix-ui/react-progress";
 
 export default function Home() {
@@ -7,14 +7,12 @@ export default function Home() {
     <div className="flex flex-col gap-4 items-center">
       <div>
       </div>
-      
 
-      
+
+
 
       <div className="flex flex-col gap-4">
-        <Button variant="elevated">
-          Click me
-        </Button>
+
         <Input
           type="email"
           placeholder="Type here..."
@@ -22,7 +20,7 @@ export default function Home() {
         />
         <progress
           className="w-64 h-4 bg-gray-200 rounded-lg shadow-lg"
-         
+
         />
         <textarea
           placeholder="Type here..."
@@ -33,10 +31,11 @@ export default function Home() {
           type="checkbox"
           className="w-4 h-4 rounded shadow-lg"
         />
-        <label className="ml-2">Check me</label>
+        <Button variant="elevated">
+          Click me
+        </Button>
       </div>
 
     </div>
   );
 }
- 

@@ -1,7 +1,5 @@
 import React from "react";
-import { MatchPredictionsTable } from "./predict";
-import { Navbar } from "./navbar";
-import { SportsBar } from "./SportsMenu";
+// import { Navbar } from "./navbar";
 
 interface Props {
     children: React.ReactNode;
@@ -11,9 +9,7 @@ const Layout = ({ children }: Props) => {
     return (
         <div className="flex flex-col min-h-screen">
      
-            <Navbar/>
-            <SportsBar />
-            <MatchPredictionsTable />
+            {/* <Navbar/> */}
                 {children}
             
         </div>

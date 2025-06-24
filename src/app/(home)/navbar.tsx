@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Lock, User, LayoutDashboard } from "lucide-react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -16,7 +16,7 @@ const NavbarItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/Hello", label: "Hello" }, // TODO: Verify if this is intentional
+  { href: "/blog", label: "Blog" },
 ];
 
 export const Navbar = () => {
@@ -25,7 +25,7 @@ export const Navbar = () => {
 
   return (
     <nav className="bg-gradient-to-r from-blue-950 to-gray-900 text-white h-16 flex items-center border-b border-gray-800/50 px-4 md:px-8 shadow-sm">
-      {/* Left: Logo */}
+      {/* Logo */}
       <div className="flex-1 flex items-center">
         <Link href="/" className="flex items-center">
           <span className={cn("text-xl md:text-2xl font-semibold tracking-tight", poppins.className)}>
@@ -34,7 +34,7 @@ export const Navbar = () => {
         </Link>
       </div>
 
-      {/* Center: Nav links (hidden on mobile) */}
+      {/* Nav Links (Desktop) */}
       <div className="hidden md:flex flex-1 justify-center gap-8">
         {NavbarItems.map((item) => (
           <Link
@@ -47,27 +47,35 @@ export const Navbar = () => {
         ))}
       </div>
 
-      {/* Right: Login/Dashboard & Premium (hidden on mobile) */}
+      {/* Right Section */}
       <div className="hidden md:flex flex-1 justify-end items-center gap-3">
         <Button
           variant="default"
           size="sm"
           onClick={() => setIsLoggedIn((v) => !v)}
-          className="bg-white text-gray-900 hover:bg-gray-200 text-xs font-medium rounded-full px-4"
+          className="bg-white text-gray-900 hover:bg-gray-200 text-xs font-medium rounded-full px-4 flex items-center gap-2"
         >
           {isLoggedIn ? (
-            <Link href="/dashboard" className="inline-block w-full h-full">
-              Dashboard
-            </Link>
+            <>
+              <LayoutDashboard className="w-4 h-4" />
+              <Link href="/dashboard" className="inline-block w-full h-full">
+                Dashboard
+              </Link>
+            </>
           ) : (
-            "Sign Up"
+            <>
+              <User className="w-4 h-4" />
+              Sign Up
+            </>
           )}
         </Button>
+
         <Button
           variant="default"
           size="sm"
-          className="bg-blue-600 text-white hover:bg-blue-700 text-xs font-medium rounded-full px-4"
+          className="bg-blue-600 text-white hover:bg-blue-700 text-xs font-medium rounded-full px-4 flex items-center gap-2"
         >
+          <Lock className="w-4 h-4" />
           Premium
         </Button>
       </div>
@@ -81,10 +89,10 @@ export const Navbar = () => {
         <Menu className="w-6 h-6 text-blue-300" />
       </button>
 
-      {/* Mobile Drawer/Popup */}
+      {/* Mobile Drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 bg-gray-900/95 flex flex-col">
-          {/* Header with close button */}
+          {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-800/50">
             <span className={cn("text-xl font-semibold tracking-tight", poppins.className)}>
               Bet-Predict
@@ -93,7 +101,8 @@ export const Navbar = () => {
               <X className="w-6 h-6 text-blue-300" />
             </button>
           </div>
-          {/* Nav links */}
+
+          {/* Nav Items */}
           <div className="flex-1 flex flex-col justify-center items-end pr-8 gap-6">
             {NavbarItems.map((item) => (
               <Link
@@ -106,7 +115,8 @@ export const Navbar = () => {
               </Link>
             ))}
           </div>
-          {/* Bottom buttons */}
+
+          {/* Bottom Buttons */}
           <div className="flex flex-col gap-3 p-4 border-t border-gray-800/50">
             <Button
               variant="default"
@@ -115,21 +125,29 @@ export const Navbar = () => {
                 setIsLoggedIn((v) => !v);
                 setMobileOpen(false);
               }}
-              className="w-full bg-white text-gray-900 hover:bg-gray-200 text-sm font-medium rounded-full"
+              className="w-full bg-white text-gray-900 hover:bg-gray-200 text-sm font-medium rounded-full flex items-center justify-center gap-2"
             >
               {isLoggedIn ? (
-                <Link href="/dashboard" className="inline-block w-full h-full">
-                  Dashboard
-                </Link>
+                <>
+                  <LayoutDashboard className="w-4 h-4" />
+                  <Link href="/dashboard" className="inline-block w-full h-full">
+                    Dashboard
+                  </Link>
+                </>
               ) : (
-                "Sign Up"
+                <>
+                  <User className="w-4 h-4" />
+                  Sign Up
+                </>
               )}
             </Button>
+
             <Button
               variant="default"
               size="sm"
-              className="w-full bg-red-600 text-white hover:bg-transparent-700 text-sm font-medium rounded-full"
+              className="w-full bg-red-600 text-white hover:bg-red-700 text-sm font-medium rounded-full flex items-center justify-center gap-2"
             >
+              <Lock className="w-4 h-4" />
               Premium
             </Button>
           </div>

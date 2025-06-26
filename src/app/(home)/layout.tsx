@@ -11,9 +11,9 @@ const Layout = ({ children }: Props) => {
     return (
         <div className="flex flex-col min-h-screen">
      
-            <Navbar/>
+            {/* <Navbar/>
             <SportsBar />
-            <MatchPredictionsTable />
+            <MatchPredictionsTable /> */}
                 {children}
             
         </div>

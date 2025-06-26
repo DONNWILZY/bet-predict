@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   User,
   FileText,
@@ -10,190 +9,334 @@ import {
   History,
   ArrowDownCircle,
   ArrowUpCircle,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+  ChevronDown,
+  ChevronUp,
+  Star,
+  ArrowLeft,
+  Home,
+  LifeBuoy,
+  Paintbrush,
+  KeyRound,
+  Shield,
 } from "lucide-react";
-
-type BioKey = "name" | "email" | "phone";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
-  const [bio, setBio] = useState<Record<BioKey, string>>({
-    name: "",
-    email: "",
-    phone: "",
-  });
-
+  const [activeTab, setActiveTab] = useState("account");
+  const [showProfileSubmenu, setShowProfileSubmenu] = useState(false);
+  const [showSettingsSubmenu, setShowSettingsSubmenu] = useState(false);
+  const [bio, setBio] = useState({ name: "John Doe", email: "john@example.com", phone: "" });
   const [kycStatus, setKycStatus] = useState("Not Submitted");
+  const [wallet, setWallet] = useState<{ balance: number; earning: number }>({ balance: 1000, earning: 150 });
+  const [withdrawAmount, setWithdrawAmount] = useState("");
   const [kycType, setKycType] = useState("");
-  const [wallet, setWallet] = useState({ balance: 1000 });
-  const [transactions, setTransactions] = useState([
+  const [ticketTab, setTicketTab] = useState<"my" | "purchased">("my");
+  const isPredictor = true; // Set this based on user role
+
+  // Placeholder data
+  const transactions = [
     { id: 1, type: "Deposit", amount: 500, status: "Completed", date: "2024-06-24" },
     { id: 2, type: "Withdrawal", amount: 200, status: "Pending", date: "2024-06-23" },
-  ]);
-  const [withdrawAmount, setWithdrawAmount] = useState("");
+  ];
+  const myTickets = [
+    { id: 1, ticketNo: "TCK-123456", status: "Won" },
+    { id: 2, ticketNo: "TCK-654321", status: "Lost" },
+  ];
+  const purchasedTickets = [
+    { id: 1, ticketNo: "TCK-111222", status: "Pending" },
+    { id: 2, ticketNo: "TCK-333444", status: "Won" },
+  ];
+  const subscriptions = [
+    { id: 1, plan: "Monthly", status: "Active", expires: "2024-07-25" },
+    { id: 2, plan: "Weekly", status: "Expired", expires: "2024-06-01" },
+  ];
 
   const statusBadge = {
     Completed: "bg-green-600",
     Pending: "bg-yellow-500",
     Failed: "bg-red-600",
+    Submitted: "bg-blue-600",
     "Not Submitted": "bg-gray-600",
   }[kycStatus] || "bg-gray-600";
 
-  return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-gray-900 border-r border-gray-800 p-6 space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <nav className="space-y-3 text-gray-300 text-sm font-medium">
-          {(["profile", "kyc", "wallet", "transactions", "withdraw"] as const).map((section) => (
-            <a
-              key={section}
-              href={`#${section}`}
-              className="flex items-center gap-2 hover:text-white transition px-2 py-1 rounded hover:bg-gray-800"
-            >
-              {{
-                profile: <User className="w-4 h-4" />,
-                kyc: <ShieldCheck className="w-4 h-4" />,
-                wallet: <CreditCard className="w-4 h-4" />,
-                transactions: <History className="w-4 h-4" />,
-                withdraw: <ArrowUpCircle className="w-4 h-4" />,
-              }[section]}
-              <span className="capitalize">{section}</span>
-            </a>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 space-y-10 overflow-y-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Profile */}
-          <section id="profile" className="bg-gray-900 rounded-lg p-6 shadow border border-gray-800">
-            <div className="flex items-center gap-2 mb-4">
-              <User className="text-blue-400" />
-              <h2 className="text-xl font-semibold">Basic Bio</h2>
+  const renderTab = () => {
+    switch (activeTab) {
+      case "account":
+        return (
+          <div className="space-y-6">
+            {/* Personal Details Card */}
+            <div className="bg-gray-900 p-6 rounded-lg shadow border border-gray-800 flex items-center space-x-4">
+              <div className="rounded-full bg-gray-700 w-14 h-14 md:w-[30px] md:h-[30px]" />
+              <div>
+                <p className="font-semibold text-lg md:text-sm">{bio.name}</p>
+                <p className="text-xs text-gray-400">Regular</p>
+                <p className="text-xs text-yellow-400">{kycStatus}</p>
+              </div>
             </div>
-            <form className="space-y-4 max-w-md">
-              {(["name", "email", "phone"] as BioKey[]).map((field) => (
+            {/* Balance & Earning Card */}
+            <div className="bg-gray-900 p-6 rounded-lg shadow border border-gray-800">
+              <div className="flex flex-col items-start text-left mb-4">
+              <div className="text-gray-400 text-sm mb-1">Balance</div>
+              <div className="text-3xl font-bold mb-1">₦{wallet.balance.toFixed(2)}</div>
+              <div className="text-xs text-gray-400">
+                Earning: <span className="ml-1 text-green-400 font-semibold">₦{wallet.earning.toFixed(2)}</span>
+              </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+              <button className="bg-blue-600 hover:bg-blue-400 text-xs px-2 py-1 text-white rounded">Deposit</button>
+              <button className="bg-blue-600 hover:bg-blue-400 text-xs px-2 py-1 text-white rounded">Withdraw</button>
+              </div>
+            </div>
+
+            {/* Ticket Tabs */}
+            <div className="bg-gray-900 p-6 rounded-lg shadow border border-gray-800">
+              <div className="flex items-center gap-2 mb-4">
+                <button
+                  className={`px-4 py-1 rounded text-xs font-semibold ${ticketTab === "my" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300"}`}
+                  onClick={() => setTicketTab("my")}
+                  disabled={!isPredictor}
+                >
+                  My Tickets
+                </button>
+                <button
+                  className={`px-4 py-1 rounded text-xs font-semibold ${ticketTab === "purchased" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300"}`}
+                  onClick={() => setTicketTab("purchased")}
+                >
+                  Purchased
+                </button>
+              </div>
+              {/* Ticket Lists */}
+              {ticketTab === "my" && isPredictor && (
+                <div>
+                  {myTickets.length === 0 ? (
+                    <div className="text-gray-400 text-sm">No tickets yet.</div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {myTickets.map((ticket) => (
+                        <li key={ticket.id} className="flex justify-between items-center bg-gray-800 rounded p-2">
+                          <span className="font-mono text-blue-300">{ticket.ticketNo}</span>
+                          <span className={`text-xs ${ticket.status === "Won" ? "text-green-400" : "text-red-400"}`}>{ticket.status}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+              {ticketTab === "purchased" && (
+                <div>
+                  {purchasedTickets.length === 0 ? (
+                    <div className="text-gray-400 text-sm">No purchased tickets yet.</div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {purchasedTickets.map((ticket) => (
+                        <li key={ticket.id} className="flex justify-between items-center bg-gray-800 rounded p-2">
+                          <span className="font-mono text-blue-300">{ticket.ticketNo}</span>
+                          <span className={`text-xs ${ticket.status === "Pending" ? "text-yellow-400" : ticket.status === "Won" ? "text-green-400" : "text-red-400"}`}>{ticket.status}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Transaction List */}
+            <div className="bg-gray-900 p-6 rounded-lg shadow border border-gray-800">
+              <div className="flex items-center gap-2 mb-2">
+                <History className="text-purple-400 w-4 h-4" />
+                <h2 className="text-sm font-semibold">Transaction History</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr>
+                      <th className="py-2">Date</th>
+                      <th className="py-2">Type</th>
+                      <th className="py-2">Amount</th>
+                      <th className="py-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {transactions.map(tx => (
+                      <tr key={tx.id} className="border-t border-gray-700">
+                        <td className="py-2">{tx.date}</td>
+                        <td className="py-2">{tx.type}</td>
+                        <td className="py-2">₦{tx.amount}</td>
+                        <td className="py-2">
+                          <span className={`px-2 py-1 rounded-full text-xs ${tx.status === "Completed" ? "bg-green-600" : tx.status === "Pending" ? "bg-yellow-500" : "bg-red-600"}`}>
+                            {tx.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Subscription Module */}
+            <div className="bg-gray-900 p-6 rounded-lg shadow border border-gray-800">
+              <div className="flex items-center gap-2 mb-2">
+                <CreditCard className="text-blue-400 w-4 h-4" />
+                <h2 className="text-sm font-semibold">Subscriptions</h2>
+              </div>
+              <ul className="space-y-2">
+                {subscriptions.map(sub => (
+                  <li key={sub.id} className="flex justify-between items-center bg-gray-800 rounded p-2">
+                    <span>{sub.plan}</span>
+                    <span className={`text-xs ${sub.status === "Active" ? "text-green-400" : "text-gray-400"}`}>{sub.status}</span>
+                    <span className="text-xs text-gray-400">Expires: {sub.expires}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+      case "profile":
+        return (
+          <div className="space-y-6">
+            <form className="space-y-4 bg-gray-900 p-6 rounded-lg border border-gray-800">
+              {(["name", "email", "phone"] as Array<keyof typeof bio>).map((field) => (
                 <input
                   key={field}
-                  className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full p-2 rounded bg-gray-800 text-sm text-white border border-gray-700"
                   placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                   value={bio[field]}
                   onChange={(e) => setBio({ ...bio, [field]: e.target.value })}
                 />
               ))}
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+              <Button className="w-full bg-blue-600 text-white text-xs">Save</Button>
             </form>
-          </section>
 
-          {/* KYC */}
-          <section id="kyc" className="bg-gray-900 rounded-lg p-6 shadow border border-gray-800">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="text-yellow-400" />
-                <h2 className="text-xl font-semibold">KYC Verification</h2>
+            <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-sm font-semibold">KYC</p>
+                <span className={`px-2 py-1 text-xs rounded-full ${statusBadge}`}>{kycStatus}</span>
               </div>
-              <span className={`px-3 py-1 text-sm rounded-full ${statusBadge}`}>
-                {kycStatus}
-              </span>
-            </div>
-            <div className="space-y-4 max-w-md">
-              <select
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
-                value={kycType}
-                onChange={(e) => setKycType(e.target.value)}
-              >
-                <option value="">Select KYC Type</option>
-                <option value="passport">Passport</option>
-                <option value="driver_license">Driver’s License</option>
-                <option value="national_id">National ID</option>
-              </select>
-              <input
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
-                placeholder="Document Number"
-              />
-              <label className="w-full flex items-center p-2 rounded bg-gray-800 text-white border border-gray-700 cursor-pointer hover:bg-gray-700">
-                <FileText className="mr-2" /> Upload document
-                <input type="file" className="hidden" />
-              </label>
-              <Button className="w-full bg-yellow-500 hover:bg-yellow-600">Submit KYC</Button>
-            </div>
-          </section>
-
-          {/* Wallet */}
-          <section id="wallet" className="bg-gray-900 rounded-lg p-6 shadow border border-gray-800">
-            <div className="flex items-center gap-2 mb-2">
-              <CreditCard className="text-green-400" />
-              <h2 className="text-xl font-semibold">Wallet</h2>
-            </div>
-            <div className="text-3xl font-bold mb-4">${wallet.balance.toFixed(2)}</div>
-            <Button className="bg-green-600 hover:bg-green-700 w-full flex gap-2 justify-center items-center">
-              <ArrowDownCircle className="w-5 h-5" /> Deposit
-            </Button>
-          </section>
-
-          {/* Withdraw */}
-          <section id="withdraw" className="bg-gray-900 rounded-lg p-6 shadow border border-gray-800">
-            <div className="flex items-center gap-2 mb-4">
-              <ArrowUpCircle className="text-red-400" />
-              <h2 className="text-xl font-semibold">Request Withdrawal</h2>
-            </div>
-            <form className="space-y-4 max-w-sm">
-              <input
-                className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700"
-                type="number"
-                placeholder="Amount"
-                value={withdrawAmount}
-                onChange={(e) => setWithdrawAmount(e.target.value)}
-              />
-              <Button className="w-full bg-red-600 hover:bg-red-700 flex items-center justify-center gap-2">
-                <ArrowUpCircle className="w-5 h-5" /> Request Withdrawal
-              </Button>
-            </form>
-          </section>
-        </div>
-
-        {/* Transactions */}
-        <section id="transactions" className="bg-gray-900 rounded-lg p-6 shadow border border-gray-800">
-          <div className="flex items-center gap-2 mb-4">
-            <History className="text-purple-400" />
-            <h2 className="text-xl font-semibold">Transaction History</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-gray-700 bg-gray-800 text-gray-300">
-                <tr>
-                  {["Date", "Type", "Amount", "Status"].map((h) => (
-                    <th key={h} className="py-2 px-3">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    className="even:bg-gray-800 odd:bg-gray-900 hover:bg-gray-800 transition"
+              {kycStatus !== "Submitted" && kycStatus !== "Completed" && (
+                <>
+                  <select
+                    className="w-full p-2 rounded bg-gray-800 text-white text-xs border border-gray-700 mb-2"
+                    value={kycType}
+                    onChange={(e) => setKycType(e.target.value)}
                   >
-                    <td className="py-2 px-3">{tx.date}</td>
-                    <td className="py-2 px-3">{tx.type}</td>
-                    <td className="py-2 px-3">${tx.amount}</td>
-                    <td className="py-2 px-3">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        {
-                          Completed: "bg-green-600",
-                          Pending: "bg-yellow-500",
-                          Failed: "bg-red-600",
-                        }[tx.status] || "bg-gray-500"
-                      }`}>
-                        {tx.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    <option value="">Select KYC Type</option>
+                    <option value="passport">Passport</option>
+                    <option value="driver_license">Driver’s License</option>
+                    <option value="national_id">National ID</option>
+                  </select>
+                  <input
+                    placeholder="Document Number"
+                    className="w-full p-2 rounded bg-gray-800 text-white text-xs border border-gray-700 mb-2"
+                  />
+                  <label className="block w-full p-2 rounded bg-gray-800 text-white text-xs border border-gray-700 cursor-pointer mb-2">
+                    <FileText className="inline mr-2" /> Upload Document
+                    <input type="file" className="hidden" />
+                  </label>
+                  <Button className="w-full bg-yellow-500 text-white text-xs">Submit KYC</Button>
+                </>
+              )}
+            </div>
           </div>
-        </section>
-      </main>
+        );
+      case "settings":
+        return (
+          <div className="bg-gray-900 p-6 rounded-lg border border-gray-800 space-y-4">
+            <h2 className="text-sm font-semibold">Settings</h2>
+            <div className="space-y-2">
+              <Button className="w-full flex gap-2 text-xs text-black bg-white hover:bg-gray-100">
+                <Paintbrush className="w-4 h-4" /> Change Theme
+              </Button>
+              <Button className="w-full flex gap-2 text-xs text-black bg-white hover:bg-gray-100">
+                <KeyRound className="w-4 h-4" /> Change Password
+              </Button>
+              <Button className="w-full flex gap-2 text-xs text-black bg-white hover:bg-gray-100">
+                <Shield className="w-4 h-4" /> Two Factor Authentication
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-950 text-white">
+      {/* Mobile Navbar */}
+      <div className="md:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800">
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-bold">Dashboard</h2>
+          {/* <ArrowLeft className="w-5 h-5" />
+          <Home className="w-5 h-5" /> */}
+        </div>
+      </div>
+
+      {/* Always-visible Mobile Menu */}
+      <div className="md:hidden overflow-x-auto whitespace-nowrap bg-gray-900 px-2 py-2 border-b border-gray-800 flex gap-2">
+        <button onClick={() => setActiveTab("account")} className="text-xs px-3 py-1 rounded bg-gray-800">Account</button>
+        <button onClick={() => setActiveTab("profile")} className="text-xs px-3 py-1 rounded bg-gray-800">Profile</button>
+        <button onClick={() => setActiveTab("settings")} className="text-xs px-3 py-1 rounded bg-gray-800">Settings</button>
+        <button className="text-xs px-3 py-1 rounded bg-red-600 ml-auto">Logout</button>
+      </div>
+
+      <div className="flex min-h-screen">
+        {/* Desktop Sidebar */}
+        <aside className="w-64 hidden md:flex flex-col bg-gray-900 p-4 border-r border-gray-800 justify-between min-h-screen">
+          <div className="flex flex-col justify-between h-full">
+            <div>
+              <h2 className="text-xl font-bold mb-4">Dashboard</h2>
+              <nav className="space-y-1 text-sm">
+                <button onClick={() => setActiveTab("account")} className="w-full text-left flex items-center gap-2 p-2 rounded hover:bg-gray-800">
+                  <CreditCard className="w-4 h-4" /> Account
+                </button>
+                <div>
+                  <button onClick={() => setShowProfileSubmenu(!showProfileSubmenu)} className="w-full text-left flex items-center justify-between p-2 rounded hover:bg-gray-800">
+                    <span className="flex items-center gap-2">
+                      <User className="w-4 h-4" /> Profile
+                    </span>
+                    {showProfileSubmenu ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                  {showProfileSubmenu && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      <button onClick={() => setActiveTab("profile")} className="w-full text-left text-xs hover:underline">My Info</button>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <button onClick={() => setShowSettingsSubmenu(!showSettingsSubmenu)} className="w-full text-left flex items-center justify-between p-2 rounded hover:bg-gray-800">
+                    <span className="flex items-center gap-2">
+                      <Settings className="w-4 h-4" /> Settings
+                    </span>
+                    {showSettingsSubmenu ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                  {showSettingsSubmenu && (
+                    <div className="ml-6 mt-1 space-y-1">
+                      <button onClick={() => setActiveTab("settings")} className="w-full text-left text-xs hover:underline">Preferences</button>
+                    </div>
+                  )}
+                </div>
+              </nav>
+            </div>
+            <div className="border-t border-gray-800 pt-4 space-y-1">
+              <button className="flex items-center gap-2 text-sm text-gray-300 hover:text-white">
+                <LifeBuoy className="w-4 h-4" /> Support
+              </button>
+              <button className="flex items-center gap-2 text-sm text-red-500 hover:text-red-600">
+                <LogOut className="w-4 h-4" /> Logout
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-4 overflow-y-auto space-y-6">
+          {renderTab()}
+        </main>
+      </div>
     </div>
   );
 }

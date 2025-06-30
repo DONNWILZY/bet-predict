@@ -270,8 +270,6 @@ export default function DashboardPage() {
       <div className="md:hidden flex items-center justify-between p-4 bg-gray-900 border-b border-gray-800">
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-bold">Dashboard</h2>
-          {/* <ArrowLeft className="w-5 h-5" />
-          <Home className="w-5 h-5" /> */}
         </div>
       </div>
 

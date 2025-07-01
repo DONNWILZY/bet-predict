@@ -434,3 +434,1029 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+
+
+import React, { useState } from 'react';
+import { TrendingUp, Clock, Zap, Target, Calendar, Tag, ArrowRight, Star, Trophy, BarChart3, ThumbsUp, ThumbsDown, Heart, MessageCircle } from 'lucide-react';
+
+// Your actual blog data structure
+const blogPosts = [
+  {
+    id: "1",
+    title: "How to Win More Bets",
+    slug: "how-to-win-more-bets",
+    excerpt: "Discover strategies to increase your chances of winning.",
+    content: `
+      <p><strong>Winning bets</strong> isn't just luck—it requires research, discipline, and strategy.
+       Start by focusing on one sport and learning it thoroughly. Track team performance, player stats,
+       and external factors like weather or injuries. Avoid emotional betting and always have a staking plan.</p>
+      <p>Most importantly, manage your bankroll. Bet only what you can afford to lose and keep records of all bets
+       to learn from your mistakes. Avoid chasing losses; stay patient and stick to your strategy.</p>
+    `,
+    category: "Tips",
+    date: "2024-06-01",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821112/cld-sample-4.jpg",
+    highlight: true,
+    reactions: { up: 12, down: 2, favorite: 5 },
+    comments: [{
+      id: "c1",
+      author: "Jane",
+      content: "Great tips!",
+      date: "2024-06-02",
+      reactions: { like: 0, dislike: 0 }
+    }],
+  },
+  {
+    id: "2",
+    title: "The Psychology Behind Sports Betting",
+    slug: "psychology-of-sports-betting",
+    excerpt: "Understand the emotional triggers behind betting decisions.",
+    content: `
+      <p>Sports betting is as much psychological as it is analytical. The thrill of winning triggers dopamine,
+       making us want to bet more. But this same mechanism can lead to compulsive behavior.</p>
+      <p>Recognize the biases—like confirmation bias and gambler's fallacy—that affect decisions.
+       Staying aware of these can help you avoid costly mistakes and stay in control of your betting habits.</p>
+    `,
+    category: "Insights",
+    date: "2024-06-03",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821454/cld-sample-5.jpg",
+    highlight: false,
+    reactions: { up: 8, down: 1, favorite: 3 },
+    comments: [],
+  },
+  {
+    id: "3",
+    title: "Top 5 Common Betting Mistakes",
+    slug: "common-betting-mistakes",
+    excerpt: "Avoid these pitfalls that even experienced bettors make.",
+    content: `
+      <ul>
+        <li>Chasing losses: Trying to win back lost money often leads to bigger losses.</li>
+        <li>Betting without research: Blindly placing bets without proper analysis.</li>
+        <li>Ignoring bankroll management: Betting more than you can afford.</li>
+        <li>Overconfidence after a win streak: Leads to careless betting.</li>
+        <li>Betting under the influence: Emotions and substances impair judgment.</li>
+      </ul>
+      <p>Avoid these mistakes and watch your betting improve significantly.</p>
+    `,
+    category: "Tips",
+    date: "2024-06-05",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716822015/cld-sample-2.jpg",
+    highlight: false,
+    reactions: { up: 14, down: 3, favorite: 6 },
+    comments: [],
+  },
+  // Adding more sample posts to demonstrate the layout
+  {
+    id: "4",
+    title: "Advanced Bankroll Management Strategies",
+    slug: "advanced-bankroll-management",
+    excerpt: "Professional techniques for managing your betting funds effectively.",
+    content: "<p>Professional bankroll management is the foundation of successful betting...</p>",
+    category: "Strategy",
+    date: "2024-06-04",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821112/cld-sample-4.jpg",
+    highlight: true,
+    reactions: { up: 18, down: 1, favorite: 8 },
+    comments: [],
+  },
+  {
+    id: "5",
+    title: "Reading Odds Like a Professional",
+    slug: "reading-odds-professionally",
+    excerpt: "Master the art of interpreting betting odds and finding value.",
+    content: "<p>Understanding odds is crucial for any serious bettor...</p>",
+    category: "Education",
+    date: "2024-06-06",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821454/cld-sample-5.jpg",
+    highlight: false,
+    reactions: { up: 10, down: 0, favorite: 4 },
+    comments: [],
+  },
+  {
+    id: "6",
+    title: "Live Betting vs Pre-Match: Which is Better?",
+    slug: "live-vs-prematch-betting",
+    excerpt: "Compare the advantages and disadvantages of different betting approaches.",
+    content: "<p>Both live and pre-match betting have their place in a successful strategy...</p>",
+    category: "Comparison",
+    date: "2024-06-07",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716822015/cld-sample-2.jpg",
+    highlight: false,
+    reactions: { up: 7, down: 2, favorite: 2 },
+    comments: [],
+  }
+];
+
+const categories = ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))];
+
+const PostCard = ({ post, featured = false }) => {
+  return (
+    <div className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl ${featured ? 'lg:col-span-2 border-red-300 shadow-lg' : ''}`}>
+      {/* Image Section */}
+      <div className="relative overflow-hidden">
+        <img 
+          src={post.image} 
+          alt={post.title}
+          className={`w-full object-cover transition-transform duration-300 group-hover:scale-105 ${featured ? 'h-64' : 'h-48'}`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        
+        {/* Category badge */}
+        <div className="absolute top-3 left-3">
+          <span className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full shadow-lg">
+            {post.category}
+          </span>
+        </div>
+        
+        {featured && (
+          <div className="absolute top-3 right-3">
+            <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-bold rounded-full shadow-lg animate-pulse">
+              <Star className="w-3 h-3 mr-1" />
+              Featured
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-blue-600 text-sm font-medium">{post.category}</span>
+          <span className="text-gray-400 text-sm">•</span>
+          <span className="text-gray-600 text-sm flex items-center">
+            <Calendar className="w-4 h-4 mr-1" />
+            {new Date(post.date).toLocaleDateString()}
+          </span>
+        </div>
+        
+        <h3 className={`font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-700 transition-colors ${featured ? 'text-2xl' : 'text-xl'}`}>
+          {post.title}
+        </h3>
+        
+        <p className="text-gray-700 text-sm mb-4 line-clamp-3 leading-relaxed">
+          {post.excerpt}
+        </p>
+        
+        {/* Reactions */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <ThumbsUp className="w-4 h-4 mr-1 text-green-600" />
+              {post.reactions?.up || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <ThumbsDown className="w-4 h-4 mr-1 text-red-500" />
+              {post.reactions?.down || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <Heart className="w-4 h-4 mr-1 text-red-400" />
+              {post.reactions?.favorite || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <MessageCircle className="w-4 h-4 mr-1 text-blue-500" />
+              {post.comments?.length || 0}
+            </div>
+          </div>
+          
+          <button className="inline-flex items-center text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors">
+            Read More
+            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SectionHeader = ({ title, icon: Icon, description }) => (
+  <div className="flex items-center justify-between mb-8">
+    <div>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="p-3 bg-blue-600 rounded-xl shadow-lg">
+          <Icon className="w-6 h-6 text-white" />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+      </div>
+      {description && (
+        <p className="text-gray-600 text-base">{description}</p>
+      )}
+    </div>
+  </div>
+);
+
+export default function BettingBlogLayout() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [filteredPosts, setFilteredPosts] = useState(blogPosts);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    if (category === "All") {
+      setFilteredPosts(blogPosts);
+    } else {
+      setFilteredPosts(blogPosts.filter(post => post.category === category));
+    }
+  };
+
+  const featuredPosts = filteredPosts.filter(post => post.highlight);
+  const recentPosts = [...filteredPosts].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8);
+  const regularPosts = filteredPosts.filter(post => !post.highlight);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="mb-12">
+        <div className="grid md:grid-cols-2 gap-8 items-center rounded-2xl overflow-hidden relative bg-gradient-to-br from-blue-50 to-indigo-50 p-8 border-2 border-blue-200">
+          <div className="relative flex items-center justify-center order-2 md:order-1">
+            <div 
+              className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+              style={{
+                transform: "rotate(2deg)",
+                filter: "drop-shadow(0 10px 20px rgba(59, 130, 246, 0.3))"
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-purple-200 rounded-xl transform rotate-1 opacity-60"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-red-200 to-orange-200 rounded-xl transform -rotate-1 opacity-40"></div>
+              <img
+                src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=320&fit=crop&crop=entropy&auto=format&q=80"
+                alt="Sports betting analytics dashboard"
+                className="relative w-full h-64 md:h-80 object-cover rounded-xl border-4 border-white shadow-2xl"
+              />
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
+              <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full animate-bounce shadow-lg"></div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center space-y-6 order-1 md:order-2">
+            <div className="space-y-4">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-sm font-bold rounded-full border-2 border-red-200">
+                <Trophy className="w-4 h-4 mr-2" />
+                Expert Betting Insights
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
+                  Master Sports Betting
+                </span>
+                <br />
+                <span className="text-gray-900">With Proven Strategies</span>
+              </h1>
+              
+              <p className="text-gray-700 text-lg leading-relaxed max-w-lg">
+                Learn from expert analysis, proven strategies, and insider tips that will transform your betting approach and maximize your winning potential.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <BarChart3 className="mr-2 w-5 h-5" />
+                <span>Start Learning</span>
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              
+              <button className="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200">
+                <Target className="mr-2 w-5 h-5" />
+                Browse Tips
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-8 pt-4 border-t-2 border-gray-200">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">95%</div>
+                <div className="text-sm text-gray-600">Success Rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">1000+</div>
+                <div className="text-sm text-gray-600">Tips Shared</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">25K+</div>
+                <div className="text-sm text-gray-600">Happy Users</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-3 mb-10">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategoryChange(category)}
+            className={`px-5 py-3 rounded-full text-sm font-bold transition-all duration-200 ${
+              selectedCategory === category
+                ? "bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg transform scale-105"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700 border-2 border-gray-200 hover:border-blue-300"
+            }`}
+          >
+            <Tag className="w-4 h-4 mr-2 inline" />
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Featured Posts */}
+      {featuredPosts.length > 0 && (
+        <section className="mb-12">
+          <SectionHeader 
+            title="Featured Articles" 
+            icon={Star}
+            description="Our most popular and highest-rated betting guides and strategies"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredPosts.map((post) => (
+              <PostCard key={post.id} post={post} featured={true} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Recent Posts */}
+      <section className="mb-12">
+        <SectionHeader 
+          title="Latest Articles" 
+          icon={Clock}
+          description="Fresh insights and the newest betting strategies from our experts"
+        />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {recentPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+
+      {/* All Posts */}
+      <section className="mb-12">
+        <SectionHeader 
+          title="All Articles" 
+          icon={TrendingUp}
+          description="Complete collection of betting guides, tips, and expert analysis"
+        />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {regularPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-blue-200">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-full mb-6 shadow-lg">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            Get Premium Betting Tips
+          </h3>
+          <p className="text-gray-700 text-lg mb-6">
+            Join thousands of successful bettors who receive our exclusive daily tips, expert analysis, and winning strategies.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+
+
+
+
+"use client";
+
+import Link from "next/link";
+import { blogPosts } from "@/lib/blogData";
+import { useState } from "react";
+import { Navbar } from "./../(home)/navbar"; 
+
+const categories = ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))];
+
+export default function BlogPage() {
+  const [selected, setSelected] = useState("All");
+  const filtered = selected === "All" ? blogPosts : blogPosts.filter((p) => p.category === selected);
+  const recent = [...blogPosts].sort((a, b) => Date.parse(b.date) - Date.parse(a.date)).slice(0, 4);
+  const random = [...blogPosts].sort(() => Math.random() - 0.5).slice(0, 4);
+
+  return (
+    <main className="max-w-screen-xl mx-auto px-4 py-10">
+      {/* Header Content Section */}
+      {/* Navbar Import */}
+      {/* @ts-ignore */}
+      <Navbar />
+
+       <section className="mb-10">
+      <div className="grid md:grid-cols-2 gap-8 items-center rounded-2xl overflow-hidden relative bg-gradient-to-br from-slate-50 to-blue-50 p-6 md:p-8">
+        {/* Image Section */}
+        <div className="relative flex items-center justify-center order-2 md:order-1">
+          <div 
+            className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+            style={{
+              transform: "rotate(2deg)",
+              filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.15))"
+            }}
+          >
+            <div className="absolute inset-0 bg-white rounded-xl transform rotate-1 opacity-80"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl transform -rotate-1 opacity-60"></div>
+            <img
+              src="https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=400&h=320&fit=crop&crop=entropy&auto=format&q=80"
+              alt="Creative coding workspace with laptop and code"
+              className="relative w-full h-64 md:h-80 object-cover rounded-xl border-4 border-white shadow-lg"
+            />
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
+            <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-gradient-to-br from-green-400 to-blue-500 rounded-full animate-bounce shadow-lg"></div>
+          </div>
+        </div>
+
+        {/* Text Section */}
+        <div className="flex flex-col justify-center space-y-6 order-1 md:order-2">
+          <div className="space-y-4">
+            <div className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+              ✨ Featured Content
+            </div>
+            
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
+                Unlock Daily Winning
+              </span>
+              <br />
+              <span className="text-slate-800">Bet Predictions</span>
+            </h1>
+            
+            <p className="text-slate-600 text-lg leading-relaxed max-w-lg">
+             Access expert betting tips, match previews, and high-accuracy predictions to help you make smarter bets and win big. Perfect for both newbies and pro punters.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button className="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+              <span>Start Reading</span>
+              <svg className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+            
+            <button className="inline-flex items-center px-6 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-200 hover:shadow-md">
+              <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Learn More
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center space-x-6 pt-4 border-t border-slate-200">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-800">50+</div>
+              <div className="text-sm text-slate-500">Articles</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-800">10K+</div>
+              <div className="text-sm text-slate-500">Readers</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-800">5★</div>
+              <div className="text-sm text-slate-500">Rating</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+      <div className="flex flex-wrap gap-2 mb-8">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelected(cat)}
+            className={`px-3 py-1 rounded-full text-xs font-semibold ${selected === cat ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"}`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Featured Section */}
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-white">Featured</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          {filtered
+            .filter((p) => p.highlight)
+            .map((post) => (
+              <Link key={post.id} href={`/blog/${post.slug}`} className="bg-gray-900 rounded-lg overflow-hidden border border-gray-700">
+                {post.image && <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />}
+                <div className="p-4">
+                  <h4 className="text-xl font-bold text-blue-400 mb-1">{post.title}</h4>
+                  <p className="text-xs text-gray-400 mb-2">{post.category} · {post.date}</p>
+                  <p className="text-gray-300 text-sm">{post.excerpt}</p>
+                </div>
+              </Link>
+            ))}
+        </div>
+      </section>
+
+      {/* Recent Section */}
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-white">Recent Posts</h3>
+        <div className="grid md:grid-cols-4 gap-4">
+          {recent.map((post) => (
+            <Link key={post.id} href={`/blog/${post.slug}`} className="bg-gray-800 rounded shadow p-4 hover:bg-gray-700">
+              <h4 className="text-sm font-bold text-blue-400 mb-1">{post.title}</h4>
+              <p className="text-xs text-gray-400">{post.date}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Random Section */}
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-white">Random Reads</h3>
+        <div className="grid md:grid-cols-4 gap-4">
+          {random.map((post) => (
+            <Link key={post.id} href={`/blog/${post.slug}`} className="bg-gray-800 rounded shadow p-4 hover:bg-gray-700">
+              <h4 className="text-sm font-bold text-blue-400 mb-1">{post.title}</h4>
+              <p className="text-xs text-gray-400">{post.date}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* All Posts */}
+      <section className="mb-10">
+        <h3 className="text-xl font-semibold mb-4 text-white">All Posts</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          {filtered
+            .filter((p) => !p.highlight)
+            .map((post) => (
+              <Link key={post.id} href={`/blog/${post.slug}`} className="bg-gray-900 rounded-lg border border-gray-700 overflow-hidden hover:shadow-lg">
+                {post.image && <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />}
+                <div className="p-4">
+                  <h4 className="text-xl font-bold text-blue-400 mb-1">{post.title}</h4>
+                  <p className="text-xs text-gray-400 mb-2">{post.category} · {post.date}</p>
+                  <p className="text-gray-300 text-sm">{post.excerpt}</p>
+                </div>
+              </Link>
+            ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+"use client";
+import React, { useState } from 'react';
+import { TrendingUp, Clock, Zap, Target, Calendar, Tag, ArrowRight, Star, Trophy, BarChart3, ThumbsUp, ThumbsDown, Heart, MessageCircle } from 'lucide-react';
+
+// Your actual blog data structure
+const blogPosts = [
+  {
+    id: "1",
+    title: "How to Win More Bets",
+    slug: "how-to-win-more-bets",
+    excerpt: "Discover strategies to increase your chances of winning.",
+    content: `
+      <p><strong>Winning bets</strong> isn't just luck—it requires research, discipline, and strategy.
+       Start by focusing on one sport and learning it thoroughly. Track team performance, player stats,
+       and external factors like weather or injuries. Avoid emotional betting and always have a staking plan.</p>
+      <p>Most importantly, manage your bankroll. Bet only what you can afford to lose and keep records of all bets
+       to learn from your mistakes. Avoid chasing losses; stay patient and stick to your strategy.</p>
+    `,
+    category: "Tips",
+    date: "2024-06-01",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821112/cld-sample-4.jpg",
+    highlight: true,
+    reactions: { up: 12, down: 2, favorite: 5 },
+    comments: [{
+      id: "c1",
+      author: "Jane",
+      content: "Great tips!",
+      date: "2024-06-02",
+      reactions: { like: 0, dislike: 0 }
+    }],
+  },
+  {
+    id: "2",
+    title: "The Psychology Behind Sports Betting",
+    slug: "psychology-of-sports-betting",
+    excerpt: "Understand the emotional triggers behind betting decisions.",
+    content: `
+      <p>Sports betting is as much psychological as it is analytical. The thrill of winning triggers dopamine,
+       making us want to bet more. But this same mechanism can lead to compulsive behavior.</p>
+      <p>Recognize the biases—like confirmation bias and gambler's fallacy—that affect decisions.
+       Staying aware of these can help you avoid costly mistakes and stay in control of your betting habits.</p>
+    `,
+    category: "Insights",
+    date: "2024-06-03",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821454/cld-sample-5.jpg",
+    highlight: false,
+    reactions: { up: 8, down: 1, favorite: 3 },
+    comments: [],
+  },
+  {
+    id: "3",
+    title: "Top 5 Common Betting Mistakes",
+    slug: "common-betting-mistakes",
+    excerpt: "Avoid these pitfalls that even experienced bettors make.",
+    content: `
+      <ul>
+        <li>Chasing losses: Trying to win back lost money often leads to bigger losses.</li>
+        <li>Betting without research: Blindly placing bets without proper analysis.</li>
+        <li>Ignoring bankroll management: Betting more than you can afford.</li>
+        <li>Overconfidence after a win streak: Leads to careless betting.</li>
+        <li>Betting under the influence: Emotions and substances impair judgment.</li>
+      </ul>
+      <p>Avoid these mistakes and watch your betting improve significantly.</p>
+    `,
+    category: "Tips",
+    date: "2024-06-05",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716822015/cld-sample-2.jpg",
+    highlight: false,
+    reactions: { up: 14, down: 3, favorite: 6 },
+    comments: [],
+  },
+  // Adding more sample posts to demonstrate the layout
+  {
+    id: "4",
+    title: "Advanced Bankroll Management Strategies",
+    slug: "advanced-bankroll-management",
+    excerpt: "Professional techniques for managing your betting funds effectively.",
+    content: "<p>Professional bankroll management is the foundation of successful betting...</p>",
+    category: "Strategy",
+    date: "2024-06-04",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821112/cld-sample-4.jpg",
+    highlight: true,
+    reactions: { up: 18, down: 1, favorite: 8 },
+    comments: [],
+  },
+  {
+    id: "5",
+    title: "Reading Odds Like a Professional",
+    slug: "reading-odds-professionally",
+    excerpt: "Master the art of interpreting betting odds and finding value.",
+    content: "<p>Understanding odds is crucial for any serious bettor...</p>",
+    category: "Education",
+    date: "2024-06-06",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716821454/cld-sample-5.jpg",
+    highlight: false,
+    reactions: { up: 10, down: 0, favorite: 4 },
+    comments: [],
+  },
+  {
+    id: "6",
+    title: "Live Betting vs Pre-Match: Which is Better?",
+    slug: "live-vs-prematch-betting",
+    excerpt: "Compare the advantages and disadvantages of different betting approaches.",
+    content: "<p>Both live and pre-match betting have their place in a successful strategy...</p>",
+    category: "Comparison",
+    date: "2024-06-07",
+    image: "https://res.cloudinary.com/dh8rykrzu/image/upload/v1716822015/cld-sample-2.jpg",
+    highlight: false,
+    reactions: { up: 7, down: 2, favorite: 2 },
+    comments: [],
+  }
+];
+
+const categories = ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))];
+
+type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  date: string;
+  image: string;
+  highlight: boolean;
+  reactions?: {
+    up?: number;
+    down?: number;
+    favorite?: number;
+  };
+  comments?: Array<{
+    id: string;
+    author: string;
+    content: string;
+    date: string;
+    reactions?: {
+      like?: number;
+      dislike?: number;
+    };
+  }>;
+};
+
+interface PostCardProps {
+  post: BlogPost;
+  featured?: boolean;
+}
+
+const PostCard = ({ post, featured = false }: PostCardProps) => {
+  return (
+    <div className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition-all duration-300 hover:shadow-xl ${featured ? 'lg:col-span-2 border-red-300 shadow-lg' : ''}`}>
+      {/* Image Section */}
+      <div className="relative overflow-hidden">
+        <img 
+          src={post.image} 
+          alt={post.title}
+          className={`w-full object-cover transition-transform duration-300 group-hover:scale-105 ${featured ? 'h-64' : 'h-48'}`}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        
+        {/* Category badge */}
+        <div className="absolute top-3 left-3">
+          <span className="px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full shadow-lg">
+            {post.category}
+          </span>
+        </div>
+        
+        {featured && (
+          <div className="absolute top-3 right-3">
+            <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-bold rounded-full shadow-lg animate-pulse">
+              <Star className="w-3 h-3 mr-1" />
+              Featured
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-6">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="text-blue-600 text-sm font-medium">{post.category}</span>
+          <span className="text-gray-400 text-sm">•</span>
+          <span className="text-gray-600 text-sm flex items-center">
+            <Calendar className="w-4 h-4 mr-1" />
+            {new Date(post.date).toLocaleDateString()}
+          </span>
+        </div>
+        
+        <h3 className={`font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-700 transition-colors ${featured ? 'text-2xl' : 'text-xl'}`}>
+          {post.title}
+        </h3>
+        
+        <p className="text-gray-700 text-sm mb-4 line-clamp-3 leading-relaxed">
+          {post.excerpt}
+        </p>
+        
+        {/* Reactions */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <ThumbsUp className="w-4 h-4 mr-1 text-green-600" />
+              {post.reactions?.up || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <ThumbsDown className="w-4 h-4 mr-1 text-red-500" />
+              {post.reactions?.down || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <Heart className="w-4 h-4 mr-1 text-red-400" />
+              {post.reactions?.favorite || 0}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <MessageCircle className="w-4 h-4 mr-1 text-blue-500" />
+              {post.comments?.length || 0}
+            </div>
+          </div>
+          
+          <button className="inline-flex items-center text-blue-600 text-sm font-semibold hover:text-blue-800 transition-colors">
+            Read More
+            <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+type SectionHeaderProps = {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description?: string;
+};
+
+const SectionHeader = ({ title, icon: Icon, description }: SectionHeaderProps) => (
+  <div className="flex items-center justify-between mb-8">
+    <div>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="p-3 bg-blue-600 rounded-xl shadow-lg">
+          <Icon className="w-6 h-6 text-white" />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+      </div>
+      {description && (
+        <p className="text-gray-600 text-base">{description}</p>
+      )}
+    </div>
+  </div>
+);
+
+export default function BettingBlogLayout() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [filteredPosts, setFilteredPosts] = useState(blogPosts);
+
+  interface HandleCategoryChange {
+    (category: string): void;
+  }
+
+  const handleCategoryChange: HandleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    if (category === "All") {
+      setFilteredPosts(blogPosts);
+    } else {
+      setFilteredPosts(blogPosts.filter(post => post.category === category));
+    }
+  };
+
+  const featuredPosts = filteredPosts.filter(post => post.highlight);
+  const recentPosts = [...filteredPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
+  const regularPosts = filteredPosts.filter(post => !post.highlight);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="mb-12">
+        <div className="grid md:grid-cols-2 gap-8 items-center rounded-2xl overflow-hidden relative bg-gradient-to-br from-blue-50 to-indigo-50 p-8 border-2 border-blue-200">
+          <div className="relative flex items-center justify-center order-2 md:order-1">
+            <div 
+              className="relative group cursor-pointer transition-transform duration-300 hover:scale-105"
+              style={{
+                transform: "rotate(2deg)",
+                filter: "drop-shadow(0 10px 20px rgba(59, 130, 246, 0.3))"
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-purple-200 rounded-xl transform rotate-1 opacity-60"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-red-200 to-orange-200 rounded-xl transform -rotate-1 opacity-40"></div>
+              <img
+                src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=320&fit=crop&crop=entropy&auto=format&q=80"
+                alt="Sports betting analytics dashboard"
+                className="relative w-full h-64 md:h-80 object-cover rounded-xl border-4 border-white shadow-2xl"
+              />
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
+              <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full animate-bounce shadow-lg"></div>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center space-y-6 order-1 md:order-2">
+            <div className="space-y-4">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-red-100 to-orange-100 text-red-700 text-sm font-bold rounded-full border-2 border-red-200">
+                <Trophy className="w-4 h-4 mr-2" />
+                Expert Betting Insights
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
+                  Master Sports Betting
+                </span>
+                <br />
+                <span className="text-gray-900">With Proven Strategies</span>
+              </h1>
+              
+              <p className="text-gray-700 text-lg leading-relaxed max-w-lg">
+                Learn from expert analysis, proven strategies, and insider tips that will transform your betting approach and maximize your winning potential.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button className="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <BarChart3 className="mr-2 w-5 h-5" />
+                <span>Start Learning</span>
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              
+              <button className="inline-flex items-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200">
+                <Target className="mr-2 w-5 h-5" />
+                Browse Tips
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-8 pt-4 border-t-2 border-gray-200">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600">95%</div>
+                <div className="text-sm text-gray-600">Success Rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">1000+</div>
+                <div className="text-sm text-gray-600">Tips Shared</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">25K+</div>
+                <div className="text-sm text-gray-600">Happy Users</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      <div className="flex flex-wrap gap-3 mb-10">
+        {categories.map((category) => (
+          <button
+            key={category}
+            onClick={() => handleCategoryChange(category)}
+            className={`px-5 py-3 rounded-full text-sm font-bold transition-all duration-200 ${
+              selectedCategory === category
+                ? "bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg transform scale-105"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-700 border-2 border-gray-200 hover:border-blue-300"
+            }`}
+          >
+            <Tag className="w-4 h-4 mr-2 inline" />
+            {category}
+          </button>
+        ))}
+      </div>
+
+      {/* Featured Posts */}
+      {featuredPosts.length > 0 && (
+        <section className="mb-12">
+          <SectionHeader 
+            title="Featured Articles" 
+            icon={Star}
+            description="Our most popular and highest-rated betting guides and strategies"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredPosts.map((post) => (
+              <PostCard key={post.id} post={post} featured={true} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Recent Posts */}
+      <section className="mb-12">
+        <SectionHeader 
+          title="Latest Articles" 
+          icon={Clock}
+          description="Fresh insights and the newest betting strategies from our experts"
+        />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {recentPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+
+      {/* All Posts */}
+      <section className="mb-12">
+        <SectionHeader 
+          title="All Articles" 
+          icon={TrendingUp}
+          description="Complete collection of betting guides, tips, and expert analysis"
+        />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {regularPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-blue-200">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-red-500 to-orange-500 rounded-full mb-6 shadow-lg">
+            <Zap className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            Get Premium Betting Tips
+          </h3>
+          <p className="text-gray-700 text-lg mb-6">
+            Join thousands of successful bettors who receive our exclusive daily tips, expert analysis, and winning strategies.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              className="flex-1 px-4 py-3 bg-white border-2 border-gray-300 rounded-xl text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+            <button className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

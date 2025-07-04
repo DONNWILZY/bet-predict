@@ -1,3 +1,5 @@
+//src\app\(home)\navbar.tsx
+
 "use client"; // 👈 Must be the very first line
 
 import { useState } from "react";

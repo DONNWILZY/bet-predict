@@ -1,3 +1,5 @@
+//src\app\(home)\layout.tsx
+
 import React from "react";
 import { MatchPredictionsTable } from "./predict";
 import { Navbar } from "./navbar";

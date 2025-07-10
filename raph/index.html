@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wellness in the Park</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    /* Base Styles & Typography */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #2d3748;
+      background: #f7fafc;
+      overflow-x: hidden;
+    }
+
+    /* Smooth scrolling */
+    html { scroll-behavior: smooth; }
+
+    /* Landscape Strip */
+    .landscape-strip {
+      width: 100%;
+      height: 120px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .landscape-strip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+      transition: transform 0.3s ease;
+    }
+    .landscape-strip:hover img {
+      transform: scale(1.05);
+    }
+    .landscape-strip::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+      z-index: 1;
+    }
+    .landscape-strip::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 4s infinite;
+      z-index: 2;
+    }
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    /* Hero */
+    header.hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+      background-size: 300% 300%;
+      animation: gradientShift 8s ease infinite;
+      color: #fff;
+      text-align: center;
+      padding: 100px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; 
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 60% 60%, rgba(255,255,255,0.05) 0%, transparent 50%);
+      animation: float 15s ease-in-out infinite;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 100%; height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="0.5" fill="rgba(255,255,255,0.4)"/><circle cx="80" cy="80" r="0.5" fill="rgba(255,255,255,0.4)"/><circle cx="40" cy="70" r="0.5" fill="rgba(255,255,255,0.4)"/><circle cx="70" cy="30" r="0.5" fill="rgba(255,255,255,0.4)"/><circle cx="90" cy="50" r="0.5" fill="rgba(255,255,255,0.4)"/><circle cx="10" cy="90" r="0.5" fill="rgba(255,255,255,0.4)"/></svg>');
+      background-size: 150px 150px;
+      animation: floatParticles 20s ease-in-out infinite;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin-bottom: 25px;
+      background: linear-gradient(45deg, #fff, #e2e8f0, #fff);
+      background-size: 200% 200%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: titleGlow 4s ease-in-out infinite alternate;
+      position: relative;
+      z-index: 1;
+    }
+    .hero p {
+      font-size: 1.5rem;
+      font-weight: 300;
+      opacity: 0.95;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    @keyframes floatParticles {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      25% { transform: translateY(-10px) translateX(5px); }
+      50% { transform: translateY(-5px) translateX(-5px); }
+      75% { transform: translateY(-15px) translateX(3px); }
+    }
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+      100% { text-shadow: 0 0 40px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.3); }
+    }
+
+    /* Section Headings */
+    .section-title {
+      text-align: center;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+
+    /* Intro */
+    .intro {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: auto;
+      text-align: center;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 30px;
+      margin-top: -40px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .intro .lead {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .intro p:last-child {
+      font-size: 1.2rem;
+      color: #4a5568;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* About Section */
+    .about-section, .about-final {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 20px;
+      max-width: 1200px;
+      margin: auto;
+      gap: 50px;
+    }
+    .about-section img, .about-final img {
+      width: 400px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 25px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .about-section img:hover, .about-final img:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+    .about-section p, .about-final p {
+      font-size: 1.2rem;
+      color: #4a5568;
+      line-height: 1.8;
+    }
+
+    /* Features Section */
+    .features {
+      max-width: 1200px;
+      margin: auto;
+      padding: 100px 20px;
+    }
+    .features ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+    .features ul li {
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      font-size: 1.2rem;
+      font-weight: 500;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .features ul li:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    /* How It Works */
+    .how-it-works {
+      display: flex;
+      gap: 50px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 100px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .how-it-works-image {
+      width: 250px;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .how-it-works-image:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    }
+    .icons-grid.compact-icons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      margin-top: 40px;
+    }
+    .compact-icons .icon-box {
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      background: rgba(255,255,255,0.95);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .compact-icons .icon-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+    }
+    .compact-icons .icon-box i {
+      font-size: 1.3rem;
+      margin-top: 2px;
+      color: #667eea;
+      flex-shrink: 0;
+    }
+    .compact-icons .icon-box p {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #2d3748;
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    /* Newsletter */
+    .download-newsletter {
+      max-width: 1200px;
+      margin: auto;
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .download-newsletter::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
+    }
+    .download-newsletter .section-title {
+      color: white;
+      -webkit-text-fill-color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .download-newsletter .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 50px;
+      margin-top: 60px;
+      position: relative;
+      z-index: 1;
+    }
+    .download-newsletter .grid > div {
+      background: rgba(255,255,255,0.15);
+      padding: 40px;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .download-newsletter .grid > div:hover {
+      transform: translateY(-5px);
+    }
+    .download-newsletter .app-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .download-newsletter h3 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .download-newsletter button {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 15px 30px;
+      border-radius: 15px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+    }
+    .download-newsletter button:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    .download-newsletter input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    .download-newsletter input::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Footer */
+    .footer {
+      background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+      color: white;
+      text-align: center;
+      padding: 60px 20px;
+      margin-top: 60px;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%);
+    }
+    .footer p {
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.8rem; }
+      .hero p { font-size: 1.3rem; }
+      .section-title { font-size: 2.2rem; }
+      .how-it-works { flex-direction: column; }
+      .compact-icons { grid-template-columns: 1fr; }
+      .about-section, .about-final { flex-direction: column; text-align: center; }
+      .download-newsletter .grid { grid-template-columns: 1fr; }
+    }
+
+    /* Scroll animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="landscape-strip">
+    <img src="./images/cover.jpeg" alt="Community fitness landscape" />
+  </div>
+
+  <header class="hero">
+    <h1>Wellness in The Park</h1>
+    <p>Free Community Fitness & Wellness Events Across London</p>
+  </header>
+
+  <section class="intro fade-in-up">
+    <p class="lead">Your health. Your neighborhood. Your time to move.</p>
+    <p>Join us every Saturday for outdoor yoga, aerobics, and wellness sessions - powered by local coaches, wearable tech, and good vibes. 👉 No sign-up fees. Just show up with a smile and your gear.</p>
+  </section>
+
+  <section class="about-section fade-in-up">
+    <div style="flex: 1 1 500px;">
+      <h2 class="section-title">About Wellness in The Park</h2>
+      <p>We believe in making wellness free, fun, and accessible. From yoga mats to dance beats, our sessions bring together people of all fitness levels. Our mission is to spark healthier habits and stronger community bonds — one Saturday at a time.</p>
+    </div>
+    <div style="flex: 1 1 400px;">
+      <img src="./images/imgee (1).jpg" alt="Outdoor yoga session"/>
+    </div>
+  </section>
+
+  <section class="features fade-in-up">
+    <h2 class="section-title">What to Expect</h2>
+    <ul>
+      <li>🌿 Dynamic Warm-Ups & Mobility Drills</li>
+      <li>💃🏽 High-Energy Aerobics or Dance Cardio</li>
+      <li>🧘🏾‍♂️ Flow-Based Yoga or Stretch Sessions</li>
+      <li>💬 Short Wellness Talks (hydration, posture, stress relief)</li>
+      <li>🎶 Live music or curated playlists to keep you moving</li>
+    </ul>
+  </section>
+
+  <section class="how-it-works fade-in-up">
+    <div style="flex: 2 1 500px;">
+      <h2 class="section-title">How It Works</h2>
+      <div class="icons-grid compact-icons">
+        <div class="icon-box">
+          <i class="fas fa-qrcode"></i>
+          <p>Use a branded wristband<br/>(QR or NFC-enabled)</p>
+        </div>
+        <div class="icon-box">
+          <i class="fas fa-tshirt"></i>
+          <p>Bring merch like a bottle,<br/>mat, tee, or socks</p>
+        </div>
+        <div class="icon-box">
+          <i class="fas fa-mobile-alt"></i>
+          <p>Scan a digital invite<br/>via partner gyms</p>
+        </div>
+        <div class="icon-box">
+          <i class="fas fa-gift"></i>
+          <p>Support the event by<br/>purchasing wellness gear</p>
+        </div>
+      </div>
+    </div>
+    <div style="flex: 1 1 250px;">
+      <img src="./images/imgee (3).jpg" alt="Wellness gear and water bottle" class="how-it-works-image" />
+    </div>
+  </section>
+
+  <section class="download-newsletter fade-in-up">
+    <h2 class="section-title">Stay Connected</h2>
+    <div class="grid">
+      <div>
+        <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=300&q=80" alt="Mobile app interface" class="app-image" />
+        <h3><i class="fas fa-download"></i> Download the App</h3>
+        <p>Track your activity, unlock rewards, and get updates when we're back in your borough.</p>
+        <button>Download Now</button>
+      </div>
+      <div>
+        <div style="width: 120px; height: 120px; background: rgba(255,255,255,0.2); border-radius: 20px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+          <i class="fas fa-envelope" style="font-size: 3rem; color: white;"></i>
+        </div>
+        <h3><i class="fas fa-envelope"></i> Subscribe to Our Newsletter</h3>
+        <p>Get updates on sessions, locations, and new features delivered to your inbox.</p>
+        <input type="email" placeholder="Enter your email" />
+        <button>Subscribe</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-final fade-in-up">
+    <div style="flex: 1 1 400px;">
+      <img src="./images/imgee (7).jpg" alt="Community wellness group"/>
+    </div>
+    <div style="flex: 1 1 500px;">
+      <h2 class="section-title">Powered by the Community</h2>
+      <p>Volunteers, health coaches, local fitness centers, and generous sponsors fuel our mission. With your participation and support, we'll keep London moving — one park at a time.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 Wellness in The Park. Follow us @WellnessInThePark</p>
+  </footer>
+
+  <script>
+    // Add smooth scroll animations on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-up');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-in-up').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>

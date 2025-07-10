@@ -1,5 +1,7 @@
 "use client";
 
+import Adverts from "./adverts";
+
 import { useState } from "react";
 import {
   User,
@@ -731,194 +733,7 @@ export default function ModernDashboard() {
     </div>
   );
 
-    const renderAdverts = () => {
-      const [adForm, setAdForm] = useState({
-        title: "",
-        description: "",
-        budget: "",
-        image: null,
-      });
-      const [ads, setAds] = useState([
-        {
-          id: 1,
-          title: "Super Odds Weekend!",
-          description: "Promote your predictions and reach more users this weekend.",
-          budget: "₦10,000",
-          status: "Active",
-          created: "2024-06-20",
-        },
-        {
-          id: 2,
-          title: "Champions League Final Promo",
-          description: "Special ad for the Champions League final predictions.",
-          budget: "₦5,000",
-          status: "Paused",
-          created: "2024-06-10",
-        },
-      ]);
-      const [showForm, setShowForm] = useState(false);
-
-      const handleAdFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value, files } = e.target as HTMLInputElement;
-        setAdForm((prev) => ({
-          ...prev,
-          [name]: files ? files[0] : value,
-        }));
-      };
-
-      const handleAdSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setAds([
-          {
-            id: ads.length + 1,
-            title: adForm.title,
-            description: adForm.description,
-            budget: adForm.budget ? `₦${parseInt(adForm.budget).toLocaleString()}` : "₦0",
-            status: "Pending",
-            created: new Date().toISOString().slice(0, 10),
-          },
-          ...ads,
-        ]);
-        setAdForm({ title: "", description: "", budget: "", image: null });
-        setShowForm(false);
-      };
-
-      return (
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">Adverts</h1>
-            <button
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-colors"
-              onClick={() => setShowForm((v) => !v)}
-            >
-              <Plus className="w-4 h-4" />
-              Create Ad
-            </button>
-          </div>
-
-          {showForm && (
-            <form
-              onSubmit={handleAdSubmit}
-              className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 space-y-6"
-            >
-              <h2 className="text-lg font-semibold text-white mb-4">Create New Ad</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Ad Title</label>
-                  <input
-                    name="title"
-                    required
-                    className="w-full p-4 rounded-xl border bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="Enter ad title"
-                    value={adForm.title}
-                    onChange={handleAdFormChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Budget (₦)</label>
-                  <input
-                    name="budget"
-                    type="number"
-                    min="0"
-                    required
-                    className="w-full p-4 rounded-xl border bg-white/5 border-white/10 text-white placeholder-gray-400"
-                    placeholder="e.g. 10000"
-                    value={adForm.budget}
-                    onChange={handleAdFormChange}
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                  <textarea
-                    name="description"
-                    required
-                    rows={3}
-                    className="w-full p-4 rounded-xl border bg-white/5 border-white/10 text-white placeholder-gray-400 resize-none"
-                    placeholder="Describe your ad..."
-                    value={adForm.description}
-                    onChange={handleAdFormChange}
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Ad Image (optional)</label>
-                  <input
-                    name="image"
-                    type="file"
-                    accept="image/*"
-                    className="w-full text-gray-300"
-                    onChange={handleAdFormChange}
-                  />
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-                >
-                  Submit Ad
-                </button>
-                <button
-                  type="button"
-                  className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-medium transition-colors"
-                  onClick={() => setShowForm(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          )}
-
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-white/5">
-                  <tr>
-                    <th className="text-left p-6 text-gray-300 font-medium">Title</th>
-                    <th className="text-left p-6 text-gray-300 font-medium">Description</th>
-                    <th className="text-left p-6 text-gray-300 font-medium">Budget</th>
-                    <th className="text-left p-6 text-gray-300 font-medium">Status</th>
-                    <th className="text-left p-6 text-gray-300 font-medium">Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ads.map((ad, idx) => (
-                    <tr
-                      key={ad.id}
-                      className={`${idx !== ads.length - 1 ? "border-b border-white/5" : ""} hover:bg-white/5 transition-colors`}
-                    >
-                      <td className="p-6 text-white font-medium">{ad.title}</td>
-                      <td className="p-6 text-gray-300">{ad.description}</td>
-                      <td className="p-6 text-blue-400 font-semibold">{ad.budget}</td>
-                      <td className="p-6">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm border ${
-                            ad.status === "Active"
-                              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                              : ad.status === "Paused"
-                              ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                              : "bg-gray-500/10 text-gray-400 border-gray-500/20"
-                          }`}
-                        >
-                          {ad.status}
-                        </span>
-                      </td>
-                      <td className="p-6 text-gray-400">{ad.created}</td>
-                    </tr>
-                  ))}
-                  {ads.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="p-6 text-center text-gray-400">
-                        No adverts yet. Click "Create Ad" to get started!
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      );
-    };
+   
 
   const renderSettings = () => (
     <div className="space-y-8">
@@ -983,7 +798,7 @@ export default function ModernDashboard() {
       case "tickets": return renderTickets();
       case "transactions": return renderTransactions();
       case "settings": return renderSettings();
-      case "adverts": return renderAdverts();
+      case "adverts": return <Adverts />;
       default: return renderOverview();
     }
   };
@@ -992,10 +807,10 @@ export default function ModernDashboard() {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "profile", label: "Profile", icon: User },
     { id: "tickets", label: "Tickets", icon: FileText },
+    { id: "subscriptions", label: "Subscriptions", icon: CreditCard }, // Changed icon to CreditCard for subscriptions
     { id: "transactions", label: "Transactions", icon: History },
-     { id: "adverts", label: "Adverts", icon: Stars },
+    { id: "adverts", label: "Adverts", icon: Stars },
     { id: "settings", label: "Settings", icon: Settings },
-   
   ];
 
   return (

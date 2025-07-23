@@ -79,6 +79,32 @@ const dummyPredictions = [
         time: "20:00", 
         stadium: "Santiago Bernabéu",
         league: "La Liga"
+      },
+        { 
+        team1: "Aston Villa", 
+        team2: "Liverpool", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      },
+        { 
+        team1: "Arsenal", 
+        team2: "PSG", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
       }
     ]
   },
@@ -113,11 +139,158 @@ const dummyPredictions = [
         league: "Ligue 1"
       }
     ]
-  }
+  },
+  {
+    id: 1,
+    timestamp: "2025-07-07T10:00:00Z",
+    predictor: { 
+      name: "John Tips", 
+      avatar: "/john.jpg", 
+      rating: 4.8, 
+      followers: 8200,
+      verified: false,
+      winStreak: 3
+    },
+    premium: false,
+    price: 0,
+    views: 1920,
+    likes: 89,
+    confidence: 78,
+    games: [
+      { 
+        team1: "Man Utd", 
+        team2: "Chelsea", 
+        logo1: "/manutd.png", 
+        logo2: "/chelsea.png", 
+        prediction: "1X", 
+        odds: "1.85",
+        status: "correct", 
+        date: "2025-07-10", 
+        time: "18:00", 
+        stadium: "Old Trafford",
+        league: "Premier League"
+      },
+      { 
+        team1: "Madrid", 
+        team2: "Barca", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      },
+        { 
+        team1: "Aston Villa", 
+        team2: "Liverpool", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      },
+        { 
+        team1: "Arsenal", 
+        team2: "PSG", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      }
+    ]
+  },
+  {
+    id: 1,
+    timestamp: "2025-07-07T10:00:00Z",
+    predictor: { 
+      name: "John Tips", 
+      avatar: "/john.jpg", 
+      rating: 4.8, 
+      followers: 8200,
+      verified: false,
+      winStreak: 3
+    },
+    premium: false,
+    price: 0,
+    views: 1920,
+    likes: 89,
+    confidence: 78,
+    games: [
+      { 
+        team1: "Man Utd", 
+        team2: "Chelsea", 
+        logo1: "/manutd.png", 
+        logo2: "/chelsea.png", 
+        prediction: "1X", 
+        odds: "1.85",
+        status: "correct", 
+        date: "2025-07-10", 
+        time: "18:00", 
+        stadium: "Old Trafford",
+        league: "Premier League"
+      },
+      { 
+        team1: "Madrid", 
+        team2: "Barca", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      },
+        { 
+        team1: "Aston Villa", 
+        team2: "Liverpool", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      },
+        { 
+        team1: "Arsenal", 
+        team2: "PSG", 
+        logo1: "/rm.png", 
+        logo2: "/fcb.png", 
+        prediction: "Over 2.5", 
+        odds: "1.75",
+        status: "wrong", 
+        date: "2025-07-12", 
+        time: "20:00", 
+        stadium: "Santiago Bernabéu",
+        league: "La Liga"
+      }
+    ]
+  },
 ];
 
 // Bottom Navigation for Mobile
-function BottomNavigation({ activeTab, setActiveTab }) {
+type BottomNavigationProps = {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+};
+
+function BottomNavigation({ activeTab, setActiveTab }: BottomNavigationProps) {
   const tabs = [
     { id: 'feed', icon: Home, label: 'Feed' },
     { id: 'following', icon: Users, label: 'Following' },
@@ -151,7 +324,7 @@ function BottomNavigation({ activeTab, setActiveTab }) {
 }
 
 // Floating Action Button for Mobile
-function FloatingActionButton({ onClick }) {
+function FloatingActionButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -163,7 +336,12 @@ function FloatingActionButton({ onClick }) {
 }
 
 // Modern Sidebar Component
-function ModernSidebar({ isOpen, onClose }) {
+type ModernSidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+function ModernSidebar({ isOpen, onClose }: ModernSidebarProps) {
   const [activeFilter, setActiveFilter] = useState("all");
   const [showStats, setShowStats] = useState(false);
   
@@ -301,7 +479,37 @@ function ModernSidebar({ isOpen, onClose }) {
 }
 
 // Enhanced Mobile-First Prediction Card
-function MobilePredictionCard({ predictor, premium, price, games, timestamp, views, likes, confidence }) {
+type MobilePredictionCardProps = {
+  predictor: {
+    name: string;
+    avatar: string;
+    rating: number;
+    followers: number;
+    verified: boolean;
+    winStreak: number;
+  };
+  premium: boolean;
+  price: number;
+  games: Array<{
+    team1: string;
+    team2: string;
+    logo1: string;
+    logo2: string;
+    prediction: string;
+    odds: string;
+    status: string | null;
+    date: string;
+    time: string;
+    stadium: string;
+    league: string;
+  }>;
+  timestamp: string;
+  views: number;
+  likes: number;
+  confidence: number;
+};
+
+function MobilePredictionCard({ predictor, premium, price, games, timestamp, views, likes, confidence }: MobilePredictionCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -310,17 +518,40 @@ function MobilePredictionCard({ predictor, premium, price, games, timestamp, vie
   const totalGames = games.length;
   const accuracy = totalGames > 0 ? Math.round((correctGames / totalGames) * 100) : 0;
 
-  const timeAgo = (timestamp) => {
+  const timeAgo = (timestamp: string) => {
     const now = new Date();
     const time = new Date(timestamp);
-    const diffInHours = Math.floor((now - time) / (1000 * 60 * 60));
+    const diffInHours = Math.floor((now.getTime() - time.getTime()) / (1000 * 60 * 60));
     
     if (diffInHours < 1) return "now";
     if (diffInHours < 24) return `${diffInHours}h`;
     return `${Math.floor(diffInHours / 24)}d`;
   };
 
-  const getConfidenceColor = (confidence) => {
+  interface Game {
+    team1: string;
+    team2: string;
+    logo1: string;
+    logo2: string;
+    prediction: string;
+    odds: string;
+    status: string | null;
+    date: string;
+    time: string;
+    stadium: string;
+    league: string;
+  }
+
+  interface Predictor {
+    name: string;
+    avatar: string;
+    rating: number;
+    followers: number;
+    verified: boolean;
+    winStreak: number;
+  }
+
+  const getConfidenceColor = (confidence: number): string => {
     if (confidence >= 80) return "from-green-500 to-emerald-500";
     if (confidence >= 60) return "from-amber-500 to-orange-500";
     return "from-red-500 to-pink-500";
@@ -338,7 +569,7 @@ function MobilePredictionCard({ predictor, premium, price, games, timestamp, vie
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-200" 
                 alt={predictor.name}
                 onError={(e) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=${predictor.name}&background=6366f1&color=fff&size=48`;
+                  (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${predictor.name}&background=6366f1&color=fff&size=48`;
                 }}
               />
               {predictor.verified && (
@@ -438,7 +669,7 @@ function MobilePredictionCard({ predictor, premium, price, games, timestamp, vie
                     className="w-8 h-8 rounded" 
                     alt={game.team1}
                     onError={(e) => {
-                      e.target.src = `https://ui-avatars.com/api/?name=${game.team1}&background=random&size=32`;
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${game.team1}&background=random&size=32`;
                     }}
                   />
                   <span className="font-semibold text-slate-800 text-sm truncate">{game.team1}</span>
@@ -455,7 +686,7 @@ function MobilePredictionCard({ predictor, premium, price, games, timestamp, vie
                     className="w-8 h-8 rounded" 
                     alt={game.team2}
                     onError={(e) => {
-                      e.target.src = `https://ui-avatars.com/api/?name=${game.team2}&background=random&size=32`;
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${game.team2}&background=random&size=32`;
                     }}
                   />
                 </div>
@@ -551,8 +782,10 @@ function MobilePredictionCard({ predictor, premium, price, games, timestamp, vie
 }
 
 // Enhanced Feed Component
+type Prediction = typeof dummyPredictions[number];
+
 function ResponsivePredictionFeed() {
-  const [feed, setFeed] = useState([]);
+  const [feed, setFeed] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 

@@ -1,362 +1,94 @@
 "use client";
-import React, { useState } from "react";
-import { Plus, Target, Calendar, TrendingUp, Eye, MousePointer, DollarSign, Users, ChevronDown, ChevronUp, X } from "lucide-react";
-
-// Mock data types (in a real app, these would be imported from your lib file)
-type AdStatus = "Active" | "Paused" | "Pending" | "Rejected";
-type CampaignObjective = "Brand_Awareness" | "Reach" | "Traffic" | "Engagement" | "App_Installs" | "Video_Views" | "Lead_Generation" | "Conversions";
-type AdPlacement = "Facebook_Feed" | "Instagram_Feed" | "Instagram_Stories" | "Facebook_Stories" | "Messenger" | "Audience_Network" | "Google_Search" | "Google_Display" | "YouTube";
-type BidStrategy = "Lowest_Cost" | "Cost_Cap" | "Bid_Cap" | "Target_Cost";
-type Gender = "All" | "Male" | "Female" | "Non_Binary";
-type AgeRange = "13-17" | "18-24" | "25-34" | "35-44" | "45-54" | "55-64" | "65+";
-
-interface Location {
-  type: "Country" | "State" | "City" | "Radius";
-  name: string;
-  radius?: number;
-}
-
-interface Demographics {
-  gender: Gender;
-  ageRanges: AgeRange[];
-  locations: Location[];
-  languages: string[];
-}
-
-interface Interests {
-  categories: string[];
-  keywords: string[];
-  behaviors: string[];
-}
-
-interface Targeting {
-  demographics: Demographics;
-  interests: Interests;
-  customAudiences: string[];
-  lookalikePer: number;
-}
-
-interface AdSchedule {
-  enabled: boolean;
-  timezone: string;
-  schedule: {
-    [key: string]: {
-      enabled: boolean;
-      startTime: string;
-      endTime: string;
-    };
-  };
-}
-
-interface AdData {
-  id: number;
-  title: string;
-  description: string;
-  budget: string;
-  dailyBudget: string;
-  totalBudget: string;
-  status: AdStatus;
-  created: string;
-  startDate: string;
-  endDate?: string;
-  image?: File | null;
-  objective: CampaignObjective;
-  placements: AdPlacement[];
-  bidStrategy: BidStrategy;
-  bidAmount?: string;
-  targeting: Targeting;
-  schedule: AdSchedule;
-  impressions: number;
-  clicks: number;
-  ctr: number;
-  cpc: number;
-  spent: number;
-  conversions: number;
-}
-
-interface AdFormState {
-  title: string;
-  description: string;
-  dailyBudget: string;
-  totalBudget: string;
-  startDate: string;
-  endDate: string;
-  image: File | null;
-  objective: CampaignObjective;
-  placements: AdPlacement[];
-  bidStrategy: BidStrategy;
-  bidAmount: string;
-  targeting: Targeting;
-  schedule: AdSchedule;
-}
-
-// Mock data
-const campaignObjectives = [
-  { value: "Brand_Awareness", label: "Brand Awareness" },
-  { value: "Reach", label: "Reach" },
-  { value: "Traffic", label: "Traffic" },
-  { value: "Engagement", label: "Engagement" },
-  { value: "App_Installs", label: "App Installs" },
-  { value: "Video_Views", label: "Video Views" },
-  { value: "Lead_Generation", label: "Lead Generation" },
-  { value: "Conversions", label: "Conversions" }
-] as const;
-
-const adPlacements = [
-  { value: "Facebook_Feed", label: "Feed" },
-  { value: "Instagram_Feed", label: "Ticket Feed" },
-  { value: "Instagram_Stories", label: "Stories" },
-  { value: "Facebook_Stories", label: "Community" },
-  { value: "Messenger", label: "Messenges" },
-  { value: "Audience_Network", label: "Audience Network" },
-  { value: "Google_Search", label: "Search" },
-  { value: "Google_Display", label: "Display Network" },
-  { value: "YouTube", label: "pop up" }
-] as const;
-
-const bidStrategies = [
-  { value: "Lowest_Cost", label: "Lowest Cost" },
-  { value: "Cost_Cap", label: "Cost Cap" },
-  { value: "Bid_Cap", label: "Bid Cap" },
-  { value: "Target_Cost", label: "Target Cost" }
-] as const;
-
-const interestCategories = [
-  "Sports", "Football", "Basketball", "Tennis", "Cricket", "Gaming", "Entertainment", 
-  "Movies", "Music", "Technology", "Fashion", "Food", "Travel", "Business", "Finance",
-  "Health", "Fitness", "Education", "Books", "Art", "Photography", "Cars", "Real Estate"
-];
-
-const behaviorCategories = [
-  "Frequent Travelers", "Online Shoppers", "Mobile Game Players", "Sports Fans",
-  "Tech Early Adopters", "Luxury Shoppers", "Small Business Owners", "New Parents",
-  "College Students", "Recently Moved", "Anniversary", "Birthday"
-];
-
-const nigerianStates = [
-  "Lagos", "Kano", "Kaduna", "Oyo", "Rivers", "Bayelsa", "Katsina", "Cross River",
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Benue", "Borno", "Delta",
-  "Ebonyi", "Edo", "Ekiti", "Enugu", "Gombe", "Imo", "Jigawa", "Kebbi", "Kogi",
-  "Kwara", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Plateau", "Sokoto",
-  "Taraba", "Yobe", "Zamfara", "FCT"
-];
-
-const initialAds: AdData[] = [
-  {
-    id: 1,
-    title: "Super Odds Weekend!",
-    description: "Promote your predictions and reach more users this weekend.",
-    budget: "₦10,000",
-    dailyBudget: "₦1,000",
-    totalBudget: "₦10,000",
-    status: "Active",
-    created: "2024-06-20",
-    startDate: "2024-06-20",
-    endDate: "2024-06-30",
-    objective: "Traffic",
-    placements: ["Facebook_Feed", "Instagram_Feed"],
-    bidStrategy: "Lowest_Cost",
-    targeting: {
-      demographics: {
-        gender: "All",
-        ageRanges: ["18-24", "25-34", "35-44"],
-        locations: [
-          { type: "Country", name: "Nigeria" },
-          { type: "State", name: "Lagos" }
-        ],
-        languages: ["English", "Yoruba", "Igbo", "Hausa"]
-      },
-      interests: {
-        categories: ["Sports", "Football", "Gaming"],
-        keywords: ["football predictions", "sports betting", "odds"],
-        behaviors: ["Sports Fans", "Online Shoppers"]
-      },
-      customAudiences: ["Website Visitors", "App Users"],
-      lookalikePer: 1
-    },
-    schedule: {
-      enabled: true,
-      timezone: "Africa/Lagos",
-      schedule: {
-        monday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-        tuesday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-        wednesday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-        thursday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-        friday: { enabled: true, startTime: "09:00", endTime: "23:00" },
-        saturday: { enabled: true, startTime: "08:00", endTime: "23:00" },
-        sunday: { enabled: true, startTime: "08:00", endTime: "22:00" }
-      }
-    },
-    impressions: 15420,
-    clicks: 892,
-    ctr: 5.79,
-    cpc: 11.21,
-    spent: 8750,
-    conversions: 45
-  },
-  {
-    id: 2,
-    title: "Champions League Final Promo",
-    description: "Special ad for the Champions League final predictions.",
-    budget: "₦5,000",
-    dailyBudget: "₦500",
-    totalBudget: "₦5,000",
-    status: "Paused",
-    created: "2024-06-10",
-    startDate: "2024-06-10",
-    endDate: "2024-06-15",
-    objective: "Conversions",
-    placements: ["Google_Search", "YouTube"],
-    bidStrategy: "Target_Cost",
-    bidAmount: "₦15",
-    targeting: {
-      demographics: {
-        gender: "All",
-        ageRanges: ["18-24", "25-34", "35-44", "45-54"],
-        locations: [
-          { type: "Country", name: "Nigeria" }
-        ],
-        languages: ["English"]
-      },
-      interests: {
-        categories: ["Sports", "Football", "Entertainment"],
-        keywords: ["champions league", "football final", "predictions"],
-        behaviors: ["Sports Fans", "Tech Early Adopters"]
-      },
-      customAudiences: ["Past Customers"],
-      lookalikePer: 2
-    },
-    schedule: {
-      enabled: false,
-      timezone: "Africa/Lagos",
-      schedule: {
-        monday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        tuesday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        wednesday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        thursday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        friday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        saturday: { enabled: true, startTime: "00:00", endTime: "23:59" },
-        sunday: { enabled: true, startTime: "00:00", endTime: "23:59" }
-      }
-    },
-    impressions: 8340,
-    clicks: 234,
-    ctr: 2.81,
-    cpc: 21.37,
-    spent: 4200,
-    conversions: 12
-  }
-];
-
-const initialForm: AdFormState = {
-  title: "",
-  description: "",
-  dailyBudget: "",
-  totalBudget: "",
-  startDate: "",
-  endDate: "",
-  image: null,
-  objective: "Traffic",
-  placements: [],
-  bidStrategy: "Lowest_Cost",
-  bidAmount: "",
-  targeting: {
-    demographics: {
-      gender: "All",
-      ageRanges: [],
-      locations: [],
-      languages: []
-    },
-    interests: {
-      categories: [],
-      keywords: [],
-      behaviors: []
-    },
-    customAudiences: [],
-    lookalikePer: 1
-  },
-  schedule: {
-    enabled: false,
-    timezone: "Africa/Lagos",
-    schedule: {
-      monday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      tuesday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      wednesday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      thursday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      friday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      saturday: { enabled: true, startTime: "09:00", endTime: "22:00" },
-      sunday: { enabled: true, startTime: "09:00", endTime: "22:00" }
-    }
-  }
-};
+import React, { useState } from 'react';
+import { Plus, Target, Calendar, TrendingUp, Eye, MousePointer, DollarSign, Users, ChevronDown, ChevronUp, X } from 'lucide-react';
+import {
+  AdData,
+  AdFormState,
+  Section,
+  CampaignObjective,
+  AdPlacement,
+  BidStrategy,
+  AgeRange,
+} from '@/lib/advertTypes';
+import {
+  campaignObjectives,
+  adPlacements,
+  bidStrategies,
+  interestCategories,
+  behaviorCategories,
+  nigerianStates,
+  initialAds,
+  initialForm,
+} from '@/lib/advertData';
 
 export default function Adverts() {
   const [adForm, setAdForm] = useState<AdFormState>(initialForm);
   const [ads, setAds] = useState<AdData[]>(initialAds);
   const [showForm, setShowForm] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Record<Section, boolean>>({
+    demographics: false,
+    interests: false,
+    custom: false,
+  });
 
-  const toggleSection = (section: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(section)) {
-      newExpanded.delete(section);
-    } else {
-      newExpanded.add(section);
-    }
-    setExpandedSections(newExpanded);
-  };
-
-  const handleFormChange = (field: string, value: any) => {
-    setAdForm(prev => ({
+  const toggleSection = (section: Section) => {
+    setExpandedSections((prev) => ({
       ...prev,
-      [field]: value
+      [section]: !prev[section],
     }));
   };
 
-  const handleTargetingChange = (field: string, value: any) => {
-    setAdForm(prev => ({
+  const handleFormChange = (field: keyof AdFormState, value: any) => {
+    setAdForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleTargetingChange = (field: keyof AdFormState['targeting'], value: any) => {
+    setAdForm((prev) => ({
       ...prev,
       targeting: {
         ...prev.targeting,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
-  const handleDemographicsChange = (field: string, value: any) => {
-    setAdForm(prev => ({
+  const handleDemographicsChange = (field: keyof AdFormState['targeting']['demographics'], value: any) => {
+    setAdForm((prev) => ({
       ...prev,
       targeting: {
         ...prev.targeting,
         demographics: {
           ...prev.targeting.demographics,
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
-  const handleInterestsChange = (field: string, value: any) => {
-    setAdForm(prev => ({
+  const handleInterestsChange = (field: keyof AdFormState['targeting']['interests'], value: any) => {
+    setAdForm((prev) => ({
       ...prev,
       targeting: {
         ...prev.targeting,
         interests: {
           ...prev.targeting.interests,
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
-  const handleScheduleChange = (field: string, value: any) => {
-    setAdForm(prev => ({
+  const handleScheduleChange = (field: keyof AdFormState['schedule'], value: any) => {
+    setAdForm((prev) => ({
       ...prev,
       schedule: {
         ...prev.schedule,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
@@ -366,10 +98,10 @@ export default function Adverts() {
       id: ads.length + 1,
       title: adForm.title,
       description: adForm.description,
-      budget: adForm.totalBudget ? `₦${parseInt(adForm.totalBudget).toLocaleString()}` : "₦0",
-      dailyBudget: adForm.dailyBudget ? `₦${parseInt(adForm.dailyBudget).toLocaleString()}` : "₦0",
-      totalBudget: adForm.totalBudget ? `₦${parseInt(adForm.totalBudget).toLocaleString()}` : "₦0",
-      status: "Pending",
+      budget: adForm.totalBudget ? `₦${parseInt(adForm.totalBudget).toLocaleString()}` : '₦0',
+      dailyBudget: adForm.dailyBudget ? `₦${parseInt(adForm.dailyBudget).toLocaleString()}` : '₦0',
+      totalBudget: adForm.totalBudget ? `₦${parseInt(adForm.totalBudget).toLocaleString()}` : '₦0',
+      status: 'Pending',
       created: new Date().toISOString().slice(0, 10),
       startDate: adForm.startDate,
       endDate: adForm.endDate,
@@ -385,13 +117,27 @@ export default function Adverts() {
       ctr: 0,
       cpc: 0,
       spent: 0,
-      conversions: 0
+      conversions: 0,
     };
-    
+
     setAds([newAd, ...ads]);
     setAdForm(initialForm);
     setShowForm(false);
     setCurrentStep(1);
+  };
+
+  const handlePauseToggle = (id: number) => {
+    setAds((prev) =>
+      prev.map((ad) =>
+        ad.id === id
+          ? { ...ad, status: ad.status === 'Active' ? 'Paused' : 'Active' }
+          : ad
+      )
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    setAds((prev) => prev.filter((ad) => ad.id !== id));
   };
 
   const renderStep1 = () => (
@@ -413,9 +159,9 @@ export default function Adverts() {
           <select
             className="w-full p-3 rounded-xl border bg-white/5 border-white/10 text-white"
             value={adForm.objective}
-            onChange={(e) => handleFormChange('objective', e.target.value)}
+            onChange={(e) => handleFormChange('objective', e.target.value as CampaignObjective)}
           >
-            {campaignObjectives.map(obj => (
+            {campaignObjectives.map((obj) => (
               <option key={obj.value} value={obj.value} className="bg-gray-800">
                 {obj.label}
               </option>
@@ -492,12 +238,15 @@ export default function Adverts() {
   const renderStep2 = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-white mb-4">Ad Placements & Bidding</h3>
-      
+
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-3">Select Placements</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {adPlacements.map(placement => (
-            <label key={placement.value} className="flex items-center p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+          {adPlacements.map((placement) => (
+            <label
+              key={placement.value}
+              className="flex items-center p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+            >
               <input
                 type="checkbox"
                 className="mr-3 w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
@@ -506,7 +255,7 @@ export default function Adverts() {
                   if (e.target.checked) {
                     handleFormChange('placements', [...adForm.placements, placement.value]);
                   } else {
-                    handleFormChange('placements', adForm.placements.filter(p => p !== placement.value));
+                    handleFormChange('placements', adForm.placements.filter((p) => p !== placement.value));
                   }
                 }}
               />
@@ -522,9 +271,9 @@ export default function Adverts() {
           <select
             className="w-full p-3 rounded-xl border bg-white/5 border-white/10 text-white"
             value={adForm.bidStrategy}
-            onChange={(e) => handleFormChange('bidStrategy', e.target.value)}
+            onChange={(e) => handleFormChange('bidStrategy', e.target.value as BidStrategy)}
           >
-            {bidStrategies.map(strategy => (
+            {bidStrategies.map((strategy) => (
               <option key={strategy.value} value={strategy.value} className="bg-gray-800">
                 {strategy.label}
               </option>
@@ -551,7 +300,7 @@ export default function Adverts() {
   const renderStep3 = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-white mb-4">Audience Targeting</h3>
-      
+
       {/* Demographics */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-4">
         <button
@@ -560,13 +309,14 @@ export default function Adverts() {
           className="flex items-center justify-between w-full text-left"
         >
           <h4 className="text-white font-medium">Demographics</h4>
-          {expandedSections.has('demographics') ? 
-            <ChevronUp className="w-5 h-5 text-gray-400" /> : 
+          {expandedSections.demographics ? (
+            <ChevronUp className="w-5 h-5 text-gray-400" />
+          ) : (
             <ChevronDown className="w-5 h-5 text-gray-400" />
-          }
+          )}
         </button>
-        
-        {expandedSections.has('demographics') && (
+
+        {expandedSections.demographics && (
           <div className="mt-4 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Gender</label>
@@ -581,21 +331,24 @@ export default function Adverts() {
                 <option value="Non_Binary" className="bg-gray-800">Non-Binary</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Age Ranges</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {["13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"].map(age => (
-                  <label key={age} className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                {(['13-17', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'] as AgeRange[]).map((age) => (
+                  <label
+                    key={age}
+                    className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       className="mr-2 w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
-                      checked={adForm.targeting.demographics.ageRanges.includes(age as AgeRange)}
+                      checked={adForm.targeting.demographics.ageRanges.includes(age)}
                       onChange={(e) => {
                         if (e.target.checked) {
                           handleDemographicsChange('ageRanges', [...adForm.targeting.demographics.ageRanges, age]);
                         } else {
-                          handleDemographicsChange('ageRanges', adForm.targeting.demographics.ageRanges.filter(a => a !== age));
+                          handleDemographicsChange('ageRanges', adForm.targeting.demographics.ageRanges.filter((a) => a !== age));
                         }
                       }}
                     />
@@ -604,7 +357,7 @@ export default function Adverts() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Locations</label>
               <div className="space-y-2">
@@ -612,14 +365,14 @@ export default function Adverts() {
                   className="w-full p-3 rounded-xl border bg-white/5 border-white/10 text-white"
                   onChange={(e) => {
                     if (e.target.value) {
-                      const newLocation = { type: "State" as const, name: e.target.value };
+                      const newLocation = { type: 'State' as const, name: e.target.value };
                       handleDemographicsChange('locations', [...adForm.targeting.demographics.locations, newLocation]);
                       e.target.value = '';
                     }
                   }}
                 >
                   <option value="" className="bg-gray-800">Select a state...</option>
-                  {nigerianStates.map(state => (
+                  {nigerianStates.map((state) => (
                     <option key={state} value={state} className="bg-gray-800">{state}</option>
                   ))}
                 </select>
@@ -653,19 +406,23 @@ export default function Adverts() {
           className="flex items-center justify-between w-full text-left"
         >
           <h4 className="text-white font-medium">Interests & Behaviors</h4>
-          {expandedSections.has('interests') ? 
-            <ChevronUp className="w-5 h-5 text-gray-400" /> : 
+          {expandedSections.interests ? (
+            <ChevronUp className="w-5 h-5 text-gray-400" />
+          ) : (
             <ChevronDown className="w-5 h-5 text-gray-400" />
-          }
+          )}
         </button>
-        
-        {expandedSections.has('interests') && (
+
+        {expandedSections.interests && (
           <div className="mt-4 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Interest Categories</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                {interestCategories.map(category => (
-                  <label key={category} className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                {interestCategories.map((category) => (
+                  <label
+                    key={category}
+                    className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       className="mr-2 w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
@@ -674,7 +431,7 @@ export default function Adverts() {
                         if (e.target.checked) {
                           handleInterestsChange('categories', [...adForm.targeting.interests.categories, category]);
                         } else {
-                          handleInterestsChange('categories', adForm.targeting.interests.categories.filter(c => c !== category));
+                          handleInterestsChange('categories', adForm.targeting.interests.categories.filter((c) => c !== category));
                         }
                       }}
                     />
@@ -683,12 +440,15 @@ export default function Adverts() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Behaviors</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {behaviorCategories.map(behavior => (
-                  <label key={behavior} className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                {behaviorCategories.map((behavior) => (
+                  <label
+                    key={behavior}
+                    className="flex items-center p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       className="mr-2 w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
@@ -697,7 +457,7 @@ export default function Adverts() {
                         if (e.target.checked) {
                           handleInterestsChange('behaviors', [...adForm.targeting.interests.behaviors, behavior]);
                         } else {
-                          handleInterestsChange('behaviors', adForm.targeting.interests.behaviors.filter(b => b !== behavior));
+                          handleInterestsChange('behaviors', adForm.targeting.interests.behaviors.filter((b) => b !== behavior));
                         }
                       }}
                     />
@@ -718,19 +478,23 @@ export default function Adverts() {
           className="flex items-center justify-between w-full text-left"
         >
           <h4 className="text-white font-medium">Custom Audiences</h4>
-          {expandedSections.has('custom') ? 
-            <ChevronUp className="w-5 h-5 text-gray-400" /> : 
+          {expandedSections.custom ? (
+            <ChevronUp className="w-5 h-5 text-gray-400" />
+          ) : (
             <ChevronDown className="w-5 h-5 text-gray-400" />
-          }
+          )}
         </button>
-        
-        {expandedSections.has('custom') && (
+
+        {expandedSections.custom && (
           <div className="mt-4 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Select Custom Audiences</label>
               <div className="space-y-2">
-                {["Website Visitors", "App Users", "Past Customers", "Email Subscribers", "Engaged Users"].map(audience => (
-                  <label key={audience} className="flex items-center p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                {['Website Visitors', 'App Users', 'Past Customers', 'Email Subscribers', 'Engaged Users'].map((audience) => (
+                  <label
+                    key={audience}
+                    className="flex items-center p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
+                  >
                     <input
                       type="checkbox"
                       className="mr-3 w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
@@ -739,7 +503,7 @@ export default function Adverts() {
                         if (e.target.checked) {
                           handleTargetingChange('customAudiences', [...adForm.targeting.customAudiences, audience]);
                         } else {
-                          handleTargetingChange('customAudiences', adForm.targeting.customAudiences.filter(a => a !== audience));
+                          handleTargetingChange('customAudiences', adForm.targeting.customAudiences.filter((a) => a !== audience));
                         }
                       }}
                     />
@@ -748,7 +512,7 @@ export default function Adverts() {
                 ))}
               </div>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Lookalike Percentage</label>
               <select
@@ -772,7 +536,7 @@ export default function Adverts() {
   const renderStep4 = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-white mb-4">Schedule & Review</h3>
-      
+
       <div className="bg-white/5 border border-white/10 rounded-xl p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-white font-medium">Ad Scheduling</h4>
@@ -786,7 +550,7 @@ export default function Adverts() {
             <span className="text-white text-sm">Enable Scheduling</span>
           </label>
         </div>
-        
+
         {adForm.schedule.enabled && (
           <div className="space-y-4">
             <div>
@@ -802,7 +566,7 @@ export default function Adverts() {
                 <option value="Europe/London" className="bg-gray-800">Europe/London (GMT)</option>
               </select>
             </div>
-            
+
             <div className="grid grid-cols-1 gap-3">
               {Object.entries(adForm.schedule.schedule).map(([day, schedule]) => (
                 <div key={day} className="flex items-center space-x-3 p-3 rounded-lg border border-white/10 bg-white/5">
@@ -814,7 +578,7 @@ export default function Adverts() {
                       onChange={(e) => {
                         handleScheduleChange('schedule', {
                           ...adForm.schedule.schedule,
-                          [day]: { ...schedule, enabled: e.target.checked }
+                          [day]: { ...schedule, enabled: e.target.checked },
                         });
                       }}
                     />
@@ -829,7 +593,7 @@ export default function Adverts() {
                         onChange={(e) => {
                           handleScheduleChange('schedule', {
                             ...adForm.schedule.schedule,
-                            [day]: { ...schedule, startTime: e.target.value }
+                            [day]: { ...schedule, startTime: e.target.value },
                           });
                         }}
                       />
@@ -840,7 +604,7 @@ export default function Adverts() {
                         onChange={(e) => {
                           handleScheduleChange('schedule', {
                             ...adForm.schedule.schedule,
-                            [day]: { ...schedule, endTime: e.target.value }
+                            [day]: { ...schedule, endTime: e.target.value },
                           });
                         }}
                       />
@@ -859,19 +623,19 @@ export default function Adverts() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-400">Title:</span>
-            <span className="text-white ml-2">{adForm.title || "Not set"}</span>
+            <span className="text-white ml-2">{adForm.title || 'Not set'}</span>
           </div>
           <div>
             <span className="text-gray-400">Objective:</span>
-            <span className="text-white ml-2">{campaignObjectives.find(obj => obj.value === adForm.objective)?.label}</span>
+            <span className="text-white ml-2">{campaignObjectives.find((obj) => obj.value === adForm.objective)?.label}</span>
           </div>
           <div>
             <span className="text-gray-400">Daily Budget:</span>
-            <span className="text-white ml-2">₦{adForm.dailyBudget || "0"}</span>
+            <span className="text-white ml-2">₦{adForm.dailyBudget || '0'}</span>
           </div>
           <div>
             <span className="text-gray-400">Total Budget:</span>
-            <span className="text-white ml-2">₦{adForm.totalBudget || "0"}</span>
+            <span className="text-white ml-2">₦{adForm.totalBudget || '0'}</span>
           </div>
           <div>
             <span className="text-gray-400">Placements:</span>
@@ -885,14 +649,6 @@ export default function Adverts() {
       </div>
     </div>
   );
-
-  function handlePauseToggle(id: number): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleDelete(id: number): void {
-    throw new Error("Function not implemented.");
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4 md:p-6">
@@ -917,22 +673,22 @@ export default function Adverts() {
               <div className="flex items-center space-x-2 overflow-x-auto">
                 {[1, 2, 3, 4].map((step) => (
                   <div key={step} className="flex items-center">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      currentStep >= step ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        currentStep >= step ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300'
+                      }`}
+                    >
                       {step}
                     </div>
                     {step < 4 && (
-                      <div className={`w-8 h-0.5 mx-2 ${
-                        currentStep > step ? 'bg-blue-600' : 'bg-gray-600'
-                      }`} />
+                      <div
+                        className={`w-8 h-0.5 mx-2 ${currentStep > step ? 'bg-blue-600' : 'bg-gray-600'}`}
+                      />
                     )}
                   </div>
                 ))}
               </div>
-              <div className="text-sm text-gray-400">
-                Step {currentStep} of 4
-              </div>
+              <div className="text-sm text-gray-400">Step {currentStep} of 4</div>
             </div>
 
             <form onSubmit={handleAdSubmit} className="space-y-6">
@@ -961,7 +717,7 @@ export default function Adverts() {
                     Cancel
                   </button>
                 </div>
-                
+
                 <div className="flex gap-3">
                   {currentStep < 4 ? (
                     <button
@@ -998,7 +754,7 @@ export default function Adverts() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -1010,7 +766,7 @@ export default function Adverts() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -1022,7 +778,7 @@ export default function Adverts() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -1041,7 +797,7 @@ export default function Adverts() {
           <div className="p-6 border-b border-white/10">
             <h2 className="text-xl font-semibold text-white">Your Campaigns</h2>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-white/5">
@@ -1057,17 +813,13 @@ export default function Adverts() {
                 {ads.map((ad, idx) => (
                   <tr
                     key={ad.id}
-                    className={`${
-                      idx !== ads.length - 1 ? "border-b border-white/5" : ""
-                    } hover:bg-white/5 transition-colors`}
+                    className={`${idx !== ads.length - 1 ? 'border-b border-white/5' : ''} hover:bg-white/5 transition-colors`}
                   >
                     <td className="p-4">
                       <div>
                         <div className="text-white font-medium">{ad.title}</div>
                         <div className="text-gray-400 text-sm mt-1 line-clamp-2">{ad.description}</div>
-                        <div className="text-gray-500 text-xs mt-1">
-                          Created: {ad.created}
-                        </div>
+                        <div className="text-gray-500 text-xs mt-1">Created: {ad.created}</div>
                       </div>
                     </td>
                     <td className="p-4 hidden sm:table-cell">
@@ -1075,29 +827,26 @@ export default function Adverts() {
                       <div className="text-gray-400 text-sm">{ad.totalBudget} total</div>
                     </td>
                     <td className="p-4 hidden md:table-cell">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        ad.status === "Active" ? "bg-green-600/20 text-green-400" :
-                        ad.status === "Paused" ? "bg-yellow-600/20 text-yellow-400" :
-                        ad.status === "Pending" ? "bg-blue-600/20 text-blue-400" :
-                        "bg-red-600/20 text-red-400"
-                      }`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          ad.status === 'Active'
+                            ? 'bg-green-600/20 text-green-400'
+                            : ad.status === 'Paused'
+                            ? 'bg-yellow-600/20 text-yellow-400'
+                            : ad.status === 'Pending'
+                            ? 'bg-blue-600/20 text-blue-400'
+                            : 'bg-red-600/20 text-red-400'
+                        }`}
+                      >
                         {ad.status}
                       </span>
                     </td>
                     <td className="p-4 hidden lg:table-cell">
                       <div className="space-y-1">
-                        <div className="text-gray-400 text-sm">
-                          Impressions: {ad.impressions.toLocaleString()}
-                        </div>
-                        <div className="text-gray-400 text-sm">
-                          Clicks: {ad.clicks.toLocaleString()}
-                        </div>
-                        <div className="text-gray-400 text-sm">
-                          CTR: {ad.ctr.toFixed(2)}%
-                        </div>
-                        <div className="text-gray-400 text-sm">
-                          CPC: ₦{ad.cpc.toFixed(2)}
-                        </div>
+                        <div className="text-gray-400 text-sm">Impressions: {ad.impressions.toLocaleString()}</div>
+                        <div className="text-gray-400 text-sm">Clicks: {ad.clicks.toLocaleString()}</div>
+                        <div className="text-gray-400 text-sm">CTR: {ad.ctr.toFixed(2)}%</div>
+                        <div className="text-gray-400 text-sm">CPC: ₦{ad.cpc.toFixed(2)}</div>
                       </div>
                     </td>
                     <td className="p-4">
@@ -1105,12 +854,12 @@ export default function Adverts() {
                         <button
                           onClick={() => handlePauseToggle(ad.id)}
                           className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                            ad.status === "Active"
-                              ? "bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/30"
-                              : "bg-green-600/20 text-green-400 hover:bg-green-600/30"
+                            ad.status === 'Active'
+                              ? 'bg-yellow-600/20 text-yellow-400 hover:bg-yellow-600/30'
+                              : 'bg-green-600/20 text-green-400 hover:bg-green-600/30'
                           }`}
                         >
-                          {ad.status === "Active" ? "Pause" : "Resume"}
+                          {ad.status === 'Active' ? 'Pause' : 'Resume'}
                         </button>
                         <button
                           onClick={() => handleDelete(ad.id)}

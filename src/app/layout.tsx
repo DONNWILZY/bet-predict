@@ -19,12 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${dmSans.className} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+    <html lang="en" suppressHydrationWarning>
+  <body className={`${dmSans.className} antialiased`} suppressHydrationWarning>
+    {children}
+  </body>
+</html>
+
   );
 }

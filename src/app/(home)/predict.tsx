@@ -1,196 +1,104 @@
 "use client";
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Calendar, Trophy, Bell, Clock, Target, TrendingUp, Circle } from 'lucide-react';
+import { ChevronDown, ChevronRight, Calendar, Trophy, Bell, Clock, TrendingUp, Circle } from 'lucide-react';
+import { matches, predictionTypes, timeFrames, leagues } from '@/lib/HomepredictData';
+import { Match } from '@/lib/predictYtype';
 
-// Sample data - matches your original structure
-const matches = [
-  {
-    id: 1,
-    category: "Nigerian League",
-    flagA: "🇳🇬",
-    teamA: "Enyimba",
-    flagB: "🇳🇬",
-    teamB: "Kano Pillars",
-    oddsA: 2.1,
-    oddsB: 3.4,
-    prediction: "A",
-    result: "A",
-    time: "16:00",
-    date: "Today"
-  },
-  {
-    id: 2,
-    category: "La Liga",
-    flagA: "🇪🇸",
-    teamA: "Barcelona",
-    flagB: "🇪🇸",
-    teamB: "Real Madrid",
-    oddsA: 1.8,
-    oddsB: 2.9,
-    prediction: "B",
-    result: null,
-    time: "21:00",
-    date: "Today"
-  },
-  {
-    id: 3,
-    category: "Premier League",
-    flagA: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    teamA: "Manchester City",
-    flagB: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    teamB: "Liverpool",
-    oddsA: 2.2,
-    oddsB: 3.1,
-    prediction: "A",
-    result: null,
-    time: "17:30",
-    date: "Tomorrow"
-  },
-  {
-    id: 4,
-    category: "Football",
-    flagA: "🇫🇷",
-    teamA: "France",
-    flagB: "🇩🇪",
-    teamB: "Germany",
-    oddsA: 2.1,
-    oddsB: 3.4,
-    prediction: "A",
-    result: "A",
-  },
-  {
-    id: 5,
-    category: "Football",
-    flagA: "🇧🇷",
-    teamA: "Brazil",
-    flagB: "🇦🇷",
-    teamB: "Argentina",
-    oddsA: 1.8,
-    oddsB: 2.9,
-    prediction: "B",
-    result: "A",
-  },
-];
+// Define possible section keys
+type Section = 'nigerian' | 'timeFrames' | 'leagues';
 
-const predictionTypes = [
-  "Predictions 1X2",
-  "Under/Over 2.5 goals",
-  "Half Time",
-  "Half Time/Full Time",
-  "Both To Score",
-  "Double chance",
-  "Asian handicap",
-  "Goalscorers",
-  "Corners",
-  "Cards"
-];
+// Define content keys based on getFilteredMatches and getContentTitle
+type ContentKey =
+  | 'default'
+  | 'today'
+  | 'tomorrow'
+  | 'yesterday'
+  | 'live'
+  | 'nigerian'
+  | 'weekend'
+  | 'all'
+  | 'top'
+  | `league-${string}`;
 
-const timeFrames = [
-  { label: "Today's Predictions", key: "today" },
-  { label: "Live Predictions", key: "live" },
-  { label: "Yesterday's Predictions", key: "yesterday" },
-  { label: "Tomorrow's Predictions", key: "tomorrow" },
-  { label: "Weekend Predictions", key: "weekend" },
-  { label: "All Predictions", key: "all" },
-  { label: "Top Predictions", key: "top" }
-];
-
-const leagues = [
-  {
-    country: "Nigeria",
-    leagues: ["Nigerian Premier League", "Nigerian Championship", "Federation Cup"]
-  },
-  {
-    country: "Spain",
-    leagues: ["La Liga", "Segunda División", "Copa del Rey"]
-  },
-  {
-    country: "England",
-    leagues: ["Premier League", "Championship", "League One", "League Two"]
-  },
-  {
-    country: "Germany",
-    leagues: ["Bundesliga", "2. Bundesliga", "3. Liga"]
-  },
-  {
-    country: "Italy",
-    leagues: ["Serie A", "Serie B", "Coppa Italia"]
-  },
-  {
-    country: "France",
-    leagues: ["Ligue 1", "Ligue 2", "Coupe de France"]
-  }
-];
+// Define types for state
+type ExpandedSections = Record<Section, boolean>;
 
 export function MatchPredictionsTable() {
-  const [selectedContent, setSelectedContent] = useState("default");
-  const [selectedPredictionType, setSelectedPredictionType] = useState("Predictions 1X2");
-  const [expandedSections, setExpandedSections] = useState({
+  const [selectedContent, setSelectedContent] = useState<ContentKey>('default');
+  const [selectedPredictionType, setSelectedPredictionType] = useState<string>('Predictions 1X2');
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     nigerian: true,
     timeFrames: true,
-    leagues: false
+    leagues: false,
   });
 
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+  const toggleSection = (section: Section) => {
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
-  const handleContentChange = (contentKey, predictionType = "Predictions 1X2") => {
+  const handleContentChange = (contentKey: ContentKey, predictionType: string = 'Predictions 1X2') => {
     setSelectedContent(contentKey);
     setSelectedPredictionType(predictionType);
   };
 
-  const getFilteredMatches = () => {
-    if (selectedContent === "default") {
+  const getFilteredMatches = (): Match[] => {
+    if (selectedContent === 'default') {
       return matches;
     }
-    
-    switch(selectedContent) {
-      case "today":
-        return matches.filter(match => match.date === "Today");
-      case "tomorrow":
-        return matches.filter(match => match.date === "Tomorrow");
-      case "yesterday":
-        return matches.filter(match => match.date === "Yesterday");
-      case "live":
-        return matches.filter(match => match.result === null);
-      case "nigerian":
-        return matches.filter(match => match.category === "Nigerian League");
+
+    switch (selectedContent) {
+      case 'today':
+        return matches.filter((match) => match.date === 'Today');
+      case 'tomorrow':
+        return matches.filter((match) => match.date === 'Tomorrow');
+      case 'yesterday':
+        return matches.filter((match) => match.date === 'Yesterday');
+      case 'live':
+        return matches.filter((match) => match.result === null);
+      case 'nigerian':
+        return matches.filter((match) => match.category === 'Nigerian League');
       default:
+        if (selectedContent.startsWith('league-')) {
+          const leagueName = selectedContent.replace('league-', '').replace(/-/g, ' ');
+          return matches.filter((match) => match.category.toLowerCase() === leagueName.toLowerCase());
+        }
         return matches;
     }
   };
 
-  const getContentTitle = () => {
-    if (selectedContent === "default") {
-      return "All Predictions";
+  const getContentTitle = (): string => {
+    if (selectedContent === 'default') {
+      return 'All Predictions';
     }
-    
-    switch(selectedContent) {
-      case "today":
+
+    switch (selectedContent) {
+      case 'today':
         return "Today's Predictions";
-      case "tomorrow":
+      case 'tomorrow':
         return "Tomorrow's Predictions";
-      case "yesterday":
+      case 'yesterday':
         return "Yesterday's Predictions";
-      case "live":
-        return "Live Predictions";
-      case "weekend":
-        return "Weekend Predictions";
-      case "all":
-        return "All Predictions";
-      case "top":
-        return "Top Predictions";
-      case "nigerian":
-        return "Nigerian League";
+      case 'live':
+        return 'Live Predictions';
+      case 'weekend':
+        return 'Weekend Predictions';
+      case 'all':
+        return 'All Predictions';
+      case 'top':
+        return 'Top Predictions';
+      case 'nigerian':
+        return 'Nigerian League';
       default:
-        if (selectedContent.startsWith("league-")) {
-          return selectedContent.replace("league-", "").replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+        if (selectedContent.startsWith('league-')) {
+          return selectedContent
+            .replace('league-', '')
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, (l) => l.toUpperCase());
         }
-        return "Predictions";
+        return 'Predictions';
     }
   };
 
@@ -198,7 +106,6 @@ export function MatchPredictionsTable() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          
           {/* Left Sidebar - Blue Theme */}
           <div className="lg:col-span-3">
             <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-xl p-6 sticky top-6 text-white">
@@ -206,7 +113,7 @@ export function MatchPredictionsTable() {
                 <Trophy className="w-5 h-5 mr-2" />
                 Predictions Menu
               </h2>
-              
+
               {/* Nigerian League Section */}
               <div className="mb-6">
                 <button
@@ -216,17 +123,17 @@ export function MatchPredictionsTable() {
                   Nigerian League
                   {expandedSections.nigerian ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
-                
+
                 {expandedSections.nigerian && (
                   <div className="mt-3 ml-4 space-y-2">
                     {predictionTypes.map((type, idx) => (
                       <button
                         key={idx}
-                        onClick={() => handleContentChange("nigerian", type)}
+                        onClick={() => handleContentChange('nigerian', type)}
                         className={`block w-full text-left text-sm py-2 px-3 rounded-lg transition-all ${
-                          selectedContent === "nigerian" && selectedPredictionType === type
-                            ? "bg-blue-500 text-white font-medium"
-                            : "text-blue-100 hover:bg-blue-700"
+                          selectedContent === 'nigerian' && selectedPredictionType === type
+                            ? 'bg-blue-500 text-white font-medium'
+                            : 'text-blue-100 hover:bg-blue-700'
                         }`}
                       >
                         {type}
@@ -245,7 +152,7 @@ export function MatchPredictionsTable() {
                   Time Frames
                   {expandedSections.timeFrames ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
-                
+
                 {expandedSections.timeFrames && (
                   <div className="mt-3 ml-4 space-y-2">
                     {timeFrames.map((timeFrame, idx) => (
@@ -254,8 +161,8 @@ export function MatchPredictionsTable() {
                           onClick={() => handleContentChange(timeFrame.key)}
                           className={`block w-full text-left text-sm py-2 px-3 rounded-lg transition-all ${
                             selectedContent === timeFrame.key
-                              ? "bg-blue-500 text-white font-medium"
-                              : "text-blue-100 hover:bg-blue-700"
+                              ? 'bg-blue-500 text-white font-medium'
+                              : 'text-blue-100 hover:bg-blue-700'
                           }`}
                         >
                           {timeFrame.label}
@@ -268,8 +175,8 @@ export function MatchPredictionsTable() {
                                 onClick={() => handleContentChange(timeFrame.key, type)}
                                 className={`block w-full text-left text-xs py-1 px-2 rounded transition-all ${
                                   selectedPredictionType === type
-                                    ? "bg-blue-400 text-white"
-                                    : "text-blue-200 hover:bg-blue-700"
+                                    ? 'bg-blue-400 text-white'
+                                    : 'text-blue-200 hover:bg-blue-700'
                                 }`}
                               >
                                 {type}
@@ -292,17 +199,21 @@ export function MatchPredictionsTable() {
                   Leagues & Regions
                   {expandedSections.leagues ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
-                
+
                 {expandedSections.leagues && (
                   <div className="mt-3 ml-4 space-y-3">
                     {leagues.map((country, idx) => (
                       <div key={idx}>
                         <h4 className="font-medium text-blue-200 text-sm">{country.country}</h4>
                         <div className="ml-2 space-y-1">
-                          {country.leagues.map((league, leagueIdx) => (
+                          {country.leagues.map((league: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined, leagueIdx: React.Key | null | undefined) => (
                             <button
                               key={leagueIdx}
-                              onClick={() => handleContentChange(`league-${league.toLowerCase().replace(/\s+/g, '-')}`)}
+                              onClick={() => {
+                                if (typeof league === 'string' && league) {
+                                  handleContentChange(`league-${league.toLowerCase().replace(/\s+/g, '-')}`);
+                                }
+                              }}
                               className="block w-full text-left text-xs py-1 px-2 rounded text-blue-100 hover:bg-blue-700 transition-colors"
                             >
                               {league}
@@ -350,10 +261,14 @@ export function MatchPredictionsTable() {
                       <td className="py-3 px-4 text-gray-600 font-medium">{idx + 1}</td>
                       <td className="py-3 px-4 text-gray-600">{match.category}</td>
                       <td className="py-3 px-4 flex items-center gap-3">
-                        <span className="text-2xl transform hover:scale-110 transition-transform">{match.flagA}</span>
+                        <span className="text-2xl transform hover:scale-110 transition-transform">
+                          {match.flagA}
+                        </span>
                         <span className="font-medium text-gray-800">{match.teamA}</span>
                         <span className="mx-2 text-gray-400 font-light">vs</span>
-                        <span className="text-2xl transform hover:scale-110 transition-transform">{match.flagB}</span>
+                        <span className="text-2xl transform hover:scale-110 transition-transform">
+                          {match.flagB}
+                        </span>
                         <span className="font-medium text-gray-800">{match.teamB}</span>
                       </td>
                       <td className="py-3 px-4">
@@ -367,16 +282,16 @@ export function MatchPredictionsTable() {
                       </td>
                       <td className="py-3 px-4">
                         <span className="font-semibold text-indigo-600">
-                          {match.prediction === "A" ? match.teamA : match.teamB}
+                          {match.prediction === 'A' ? match.teamA : match.teamB}
                         </span>
                       </td>
                       <td className="py-3 px-4">
                         {match.result ? (
                           <Circle
                             className={`w-5 h-5 transform hover:scale-125 transition-transform ${
-                              match.prediction === match.result ? "text-green-600" : "text-red-600"
+                              match.prediction === match.result ? 'text-green-600' : 'text-red-600'
                             }`}
-                            fill={match.prediction === match.result ? "#10b981" : "#dc2626"}
+                            fill={match.prediction === match.result ? '#10b981' : '#dc2626'}
                           />
                         ) : (
                           <Circle className="w-5 h-5 text-gray-300 transform hover:scale-125 transition-transform" />
@@ -392,7 +307,6 @@ export function MatchPredictionsTable() {
           {/* Right Sidebar */}
           <div className="lg:col-span-3">
             <div className="space-y-6">
-              
               {/* Calendar Widget */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
@@ -402,13 +316,18 @@ export function MatchPredictionsTable() {
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">July 2025</div>
                   <div className="grid grid-cols-7 gap-1 mt-4 text-xs">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                      <div key={day} className="p-2 text-center font-medium text-gray-600">{day}</div>
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+                      <div key={`${day}-${index}`} className="p-2 text-center font-medium text-gray-600">
+                        {day}
+                      </div>
                     ))}
-                    {Array.from({length: 31}, (_, i) => (
-                      <div key={i + 1} className={`p-2 text-center cursor-pointer rounded ${
-                        i + 1 === 4 ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
-                      }`}>
+                    {Array.from({ length: 31 }, (_, i) => (
+                      <div
+                        key={i + 1}
+                        className={`p-2 text-center cursor-pointer rounded ${
+                          i + 1 === 4 ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
+                        }`}
+                      >
                         {i + 1}
                       </div>
                     ))}
@@ -424,7 +343,10 @@ export function MatchPredictionsTable() {
                 </h3>
                 <div className="space-y-3">
                   {['Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1'].map((league, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                    >
                       <span className="font-medium text-gray-800">{league}</span>
                       <span className="text-sm text-gray-500">12 matches</span>
                     </div>
@@ -466,9 +388,9 @@ export function MatchPredictionsTable() {
                 </h3>
                 <div className="space-y-3">
                   {[
-                    { title: "New prediction algorithm launched", time: "2 hours ago" },
-                    { title: "Weekend predictions now available", time: "5 hours ago" },
-                    { title: "Nigerian League coverage expanded", time: "1 day ago" }
+                    { title: 'New prediction algorithm launched', time: '2 hours ago' },
+                    { title: 'Weekend predictions now available', time: '5 hours ago' },
+                    { title: 'Nigerian League coverage expanded', time: '1 day ago' },
                   ].map((update, idx) => (
                     <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
                       <div className="text-sm font-medium text-gray-800">{update.title}</div>

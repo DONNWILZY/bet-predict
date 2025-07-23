@@ -1,0 +1,196 @@
+{
+  "name": "Kids and Teens Bootcamp Registration",
+  "fields": [
+    {
+      "type": "list",
+      "label": "Who is registering?",
+      "key": "registration_type",
+      "options": [
+        { "label": "Parent/Guardian registering a child", "value": "parent" },
+        { "label": "Child/Teen registering themselves", "value": "teen" }
+      ],
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Parent Full Name",
+      "key": "parent_name",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "email",
+      "label": "Parent Email",
+      "key": "parent_email",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Parent Phone Number",
+      "key": "parent_phone",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Child Full Name",
+      "key": "child_name",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "number",
+      "label": "Child Age",
+      "key": "child_age",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Child School",
+      "key": "child_school",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "parent" }],
+          "action": "show"
+        }
+      ],
+      "required": false
+    },
+    {
+      "type": "text",
+      "label": "Child/Teen Full Name",
+      "key": "teen_name",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "number",
+      "label": "Age",
+      "key": "teen_age",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Class/School",
+      "key": "teen_school",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": false
+    },
+    {
+      "type": "email",
+      "label": "Email",
+      "key": "teen_email",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": false
+    },
+    {
+      "type": "text",
+      "label": "Parent/Guardian Phone",
+      "key": "teen_parent_phone",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "email",
+      "label": "Parent/Guardian Email",
+      "key": "teen_parent_email",
+      "conditions": [
+        {
+          "when": [{ "field": "registration_type", "operator": "equals", "value": "teen" }],
+          "action": "show"
+        }
+      ],
+      "required": true
+    },
+    {
+      "type": "list",
+      "label": "Bootcamp Category",
+      "key": "bootcamp_category",
+      "options": [
+        { "label": "Kids (5-12)", "value": "kids" },
+        { "label": "Teens (13-19)", "value": "teens" }
+      ],
+      "required": true
+    },
+    {
+      "type": "textarea",
+      "label": "Medical or Allergy Information",
+      "key": "medical_info",
+      "required": false
+    },
+    {
+      "type": "checkbox",
+      "label": "I consent to my/my child’s participation in this bootcamp and agree to the terms and conditions.",
+      "key": "consent",
+      "required": true
+    },
+    {
+      "type": "hidden",
+      "label": "Registration ID",
+      "key": "registration_id",
+      "default": "{calc:random}"
+    }
+  ],
+  "actions": [
+    {
+      "type": "email",
+      "label": "Confirmation Email",
+      "to": "{parent_email}{teen_email}",
+      "subject": "Bootcamp Registration Confirmation",
+      "message": "Dear {parent_name}{teen_name},\n\nThank you for registering for the Kids and Teens Bootcamp. Your registration ID is {registration_id}.\n\nWe will contact you with further details shortly.\n\nIf you have any questions, please reach out to us at [Your Contact Email].\n\nBest regards,\n[Your Organization Name]"
+    }
+  ]
+}

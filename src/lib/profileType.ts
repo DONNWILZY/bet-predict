@@ -9,6 +9,8 @@ export interface Bio {
   bio: string;
   gender: string;
   occupation: string;
+  profilePicture?: File | null;
+  interest: string[]; 
 }
 
 export interface BankDetails {
@@ -21,6 +23,7 @@ export interface KycDetails {
   type: string;
   number: string;
   document: File | null;
+  note?: string; // Add note for decline or other info
 }
 
 export interface Wallet {

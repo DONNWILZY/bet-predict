@@ -18,11 +18,12 @@ export const defaultBio: Bio = {
   bio: 'Passionate sports predictor with 5+ years of experience in football analytics.',
   gender: 'Male',
   occupation: 'Sports Analyst',
+  interest: ['Football', 'Technology', 'Reading']
 };
 
 export const defaultBankDetails: BankDetails = {
   bankName: 'First Bank of Nigeria',
-  accountName: 'John Doe',
+  accountName: 'GODSWILL EFFIONG',
   accountNumber: '1234567890',
 
 };

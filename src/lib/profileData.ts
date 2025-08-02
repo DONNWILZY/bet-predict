@@ -24,6 +24,7 @@ export const defaultBankDetails: BankDetails = {
   bankName: 'First Bank of Nigeria',
   accountName: 'John Doe',
   accountNumber: '1234567890',
+
 };
 
 export const defaultKycDetails: KycDetails = {

@@ -61,7 +61,7 @@ export default function ModernDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showBalance, setShowBalance] = useState(true);
   const [bio, setBio] = useState<Bio>(defaultBio);
-  const [kycStatus, setKycStatus] = useState<Status>('Verified');
+  const [kycStatus, setKycStatus] = useState<Status>('Pending');
   const [bankDetails, setBankDetails] = useState<BankDetails>(defaultBankDetails);
   const [kycDetails, setKycDetails] = useState<KycDetails>(defaultKycDetails);
   const [isEditing, setIsEditing] = useState(false);

@@ -52,6 +52,7 @@ export interface Subscription {
   status: Status;
   expires: string;
   price: string;
+
 }
 
 export interface NavItem {

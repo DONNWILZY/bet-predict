@@ -1,3 +1,5 @@
+//src\app\premium\page.tsx
+
 "use client";
 
 import React, { useState } from 'react';
@@ -9,7 +11,7 @@ import BottomNavigation from './BottomNavigation';
 import CreateTipModal from './CreateTipModal';
 import NotificationsView from './NotificationsView';
 import PaymentModal from './PaymentModal';
-import { Prediction, Subscription } from '@/lib/premiumTypes';
+import { Prediction, Subscription, User } from '@/lib/premiumTypes';
 
 export default function PremiumPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,12 +23,12 @@ export default function PremiumPage() {
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(true);
   const [premiumTicketsViewed, setPremiumTicketsViewed] = useState(0);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([
     { id: 'sub_001', name: 'Basic Plan', ticketsRemaining: 5 },
     { id: 'sub_002', name: 'Pro Plan', ticketsRemaining: 10 }
   ]);
+  const [user, setUser] = useState<User>({ walletBalance: 500 }); // Placeholder; fetch from auth or API
 
   const handleCreateTip = (newPredictionInput: Omit<Prediction, 'id' | 'timestamp' | 'views' | 'likes' | 'premiumTicketsViewed' | 'paid' | 'subscriptionId'>) => {
     const newId = Math.max(...predictions.map(p => p.id), 0) + 1;
@@ -36,13 +38,13 @@ export default function PremiumPage() {
       timestamp: new Date().toISOString(),
       views: 0,
       likes: 0,
-      premiumTicketsViewed: isSubscribed ? premiumTicketsViewed : premiumTicketsViewed + (newPredictionInput.premium ? 1 : 0),
+      premiumTicketsViewed: !subscriptions.length ? premiumTicketsViewed + (newPredictionInput.premium ? 1 : 0) : premiumTicketsViewed,
       paid: false,
       subscriptionId: null
     };
     setPredictions([newPrediction, ...predictions]);
     setShowCreateTipModal(false);
-    if (newPrediction.premium && !isSubscribed) {
+    if (newPredictionInput.premium && !subscriptions.length) {
       setPremiumTicketsViewed(prev => prev + 1);
     }
   };
@@ -53,8 +55,9 @@ export default function PremiumPage() {
   };
 
   const handlePaymentSuccess = (ticketId: number, subscriptionId: string | null) => {
-    if (!isSubscribed && !subscriptionId) {
+    if (!subscriptions.length && !subscriptionId) {
       setPremiumTicketsViewed(prev => prev + 1);
+      setUser(prev => ({ ...prev, walletBalance: prev.walletBalance - (predictions.find(p => p.id === ticketId)?.price || 0) }));
     }
     if (subscriptionId) {
       setSubscriptions(prev =>
@@ -163,6 +166,7 @@ export default function PremiumPage() {
                   ticketId={selectedTicketId}
                   price={predictions.find(p => p.id === selectedTicketId)?.price || 0}
                   subscriptions={subscriptions}
+                  user={user}
                   onClose={() => {
                     setShowPaymentModal(false);
                     setSelectedTicketId(null);
@@ -171,14 +175,12 @@ export default function PremiumPage() {
                 />
               ) : (
                 <PredictionUpdates 
-                  activeTab={activeTab} 
-                  activeFilter={activeFilter} 
-                  setPredictions={setPredictions}
-                  searchQuery={searchQuery}
-                  isSubscribed={isSubscribed}
-                  premiumTicketsViewed={premiumTicketsViewed}
-                  onPay={handlePay}
-                />
+                      activeTab={activeTab}
+                      activeFilter={activeFilter}
+                      setPredictions={setPredictions}
+                      searchQuery={searchQuery}
+                      premiumTicketsViewed={premiumTicketsViewed}
+                      onPay={handlePay} isSubscribed={false}                />
               )}
             </div>
           </div>

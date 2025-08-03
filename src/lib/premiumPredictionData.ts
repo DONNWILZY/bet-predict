@@ -1,3 +1,5 @@
+// src/lib/premiumPredictionData.ts
+
 import { Prediction } from './premiumTypes';
 
 export const dummyPredictions: Prediction[] = [
@@ -12,8 +14,8 @@ export const dummyPredictions: Prediction[] = [
       verified: true,
       winStreak: 7,
     },
-    premium: false,
-    price: 0,
+    premium: true,
+    price: 1000,
     paid: false,
     subscriptionId: null,
     views: 2840,
@@ -32,9 +34,40 @@ export const dummyPredictions: Prediction[] = [
         time: "21:00",
         stadium: "Allianz Stadium",
         league: "Serie A"
+      },
+        {
+        team1: "Bar",
+        team2: "Ac",
+        logo1: "/juve.png",
+        logo2: "/inter.png",
+        prediction: "2",
+        odds: "2.40",
+        status: "correct",
+        date: "2025-07-08",
+        time: "21:00",
+        stadium: "Allianz Stadium",
+        league: "Serie A"
+      },
+      {
+        team1: "Man U",
+        team2: "Chelsea",
+        logo1: "/juve.png",
+        logo2: "/inter.png",
+        prediction: "2",
+        odds: "2.40",
+        status: "correct",
+        date: "2025-07-08",
+        time: "21:00",
+        stadium: "Allianz Stadium",
+        league: "Serie A"
       }
+
     ],
-    premiumTicketsViewed: 0
+    premiumTicketsViewed: 0,
+    isSubscribed: false,
+    onPay: function (ticketId: number): void {
+      throw new Error('Function not implemented.');
+    }
   },
   {
     id: 1,
@@ -108,7 +141,11 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 0,
     paid: false,
-    subscriptionId: null
+    subscriptionId: null,
+    isSubscribed: false,
+    onPay: function (ticketId: number): void {
+      throw new Error('Function not implemented.');
+    }
   },
   {
     id: 2,
@@ -143,7 +180,11 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 1,
     paid: false,
-    subscriptionId: null
+    subscriptionId: null,
+    isSubscribed: false,
+    onPay: function (ticketId: number): void {
+      throw new Error('Function not implemented.');
+    }
   },
   {
     id: 5,
@@ -178,7 +219,11 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 0,
     paid: false,
-    subscriptionId: null
+    subscriptionId: null,
+    isSubscribed: false,
+    onPay: function (ticketId: number): void {
+      throw new Error('Function not implemented.');
+    }
   }
 ];
 

@@ -40,7 +40,11 @@ export default function CreateTipModal({ onClose, onSubmit }: CreateTipModalProp
       games,
       premiumTicketsViewed: 0,
       paid: false,
-      subscriptionId: null
+      subscriptionId: null,
+      isSubscribed: false,
+      onPay: function (ticketId: number): void {
+        throw new Error('Function not implemented.');
+      }
     });
   };
 

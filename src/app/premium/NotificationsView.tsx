@@ -1,3 +1,5 @@
+// src/app/premium/NotificationsView.tsx
+
 import React from 'react';
 import { X, Bell, Users, Heart, Shield } from 'lucide-react';
 import { Notification } from '@/lib/premiumTypes';

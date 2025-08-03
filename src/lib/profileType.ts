@@ -1,3 +1,5 @@
+// src/lib/profileType.ts
+
 export type Status = 'Completed' | 'Pending' | 'Failed' | 'Won' | 'Lost' | 'Active' | 'Expired' | 'Verified';
 
 export interface Bio {

@@ -1,3 +1,5 @@
+// src/lib/premiumTypes.ts
+
 export interface Predictor {
   name: string;
   avatar: string;
@@ -14,7 +16,7 @@ export interface Game {
   logo2: string;
   prediction: string;
   odds: string;
-  status: "correct" | "wrong" | "In-Progress" | null;
+  status: "correct" | "wrong" | null;
   date: string;
   time: string;
   stadium: string;
@@ -31,7 +33,9 @@ export interface Prediction {
   likes: number;
   confidence: number;
   games: Game[];
+   isSubscribed: boolean;
   premiumTicketsViewed: number;
+  onPay: (ticketId: number) => void;
   paid: boolean;
   subscriptionId: string | null;
 }
@@ -58,4 +62,8 @@ export interface Subscription {
 export interface BottomNavigationProps {
   activeTab: string;
   setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface User {
+  walletBalance: number;
 }

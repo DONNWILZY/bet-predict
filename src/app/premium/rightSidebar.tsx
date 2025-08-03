@@ -1,3 +1,5 @@
+// src/app/premium/rightSidebar.tsx
+
 import React from 'react';
 import { Clock, Trophy, Calendar } from 'lucide-react';
 import { dummyQuickScores, dummyResults, dummyFixtures, dummyHighlights } from '@/lib/premiumPredictionData';

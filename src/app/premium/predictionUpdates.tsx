@@ -1,3 +1,5 @@
+// src/app/premium/predictionUpdates.tsx
+
 import React, { useState, useEffect } from 'react';
 import { Prediction } from '@/lib/premiumTypes';
 import { dummyPredictions } from '@/lib/premiumPredictionData';
@@ -26,42 +28,47 @@ export default function PredictionUpdates({ activeTab, activeFilter, setPredicti
   ];
 
   const dummySavedPredictions: Prediction[] = [
-    {
-      id: 4,
-      timestamp: "2025-07-08T12:00:00Z",
-      predictor: { 
-        name: "Saved Tip", 
-        avatar: "/saved.jpg", 
-        rating: 4.7, 
-        followers: 5000,
-        verified: true,
-        winStreak: 5
-      },
-      premium: false,
-      price: 0,
-      views: 1500,
-      likes: 200,
-      confidence: 80,
-      games: [
-        { 
-          team1: "Tottenham", 
-          team2: "Arsenal", 
-          logo1: "/tottenham.png", 
-          logo2: "/arsenal.png", 
-          prediction: "1", 
-          odds: "2.10",
-          status: "correct", 
-          date: "2025-07-09", 
-          time: "15:00", 
-          stadium: "Tottenham Hotspur Stadium",
-          league: "Premier League"
-        }
-      ],
-      premiumTicketsViewed: 0,
-      paid: false,
-      subscriptionId: null
+  {
+    id: 4,
+    timestamp: "2025-07-08T12:00:00Z",
+    predictor: { 
+      name: "Saved Tip", 
+      avatar: "/saved.jpg", 
+      rating: 4.7, 
+      followers: 5000,
+      verified: true,
+      winStreak: 5
+    },
+    premium: false,
+    price: 0,
+    views: 1500,
+    likes: 200,
+    confidence: 80,
+    games: [
+      { 
+        team1: "Tottenham", 
+        team2: "Arsenal", 
+        logo1: "/tottenham.png", 
+        logo2: "/arsenal.png", 
+        prediction: "1", 
+        odds: "2.10",
+        status: "correct", 
+        date: "2025-07-09", 
+        time: "15:00", 
+        stadium: "Tottenham Hotspur Stadium",
+        league: "Premier League"
+      }
+    ],
+    premiumTicketsViewed: 0,
+    paid: false,
+    subscriptionId: null,
+    isSubscribed: false,   // <-- Added
+    onPay: function (ticketId: number): void {  // <-- Added
+      throw new Error('Function not implemented.');
     }
-  ];
+  }
+];
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -177,7 +184,6 @@ export default function PredictionUpdates({ activeTab, activeFilter, setPredicti
               <MobilePredictionCard 
                 key={pred.id} 
                 {...pred} 
-                hasPaid={hasPaid} 
                 isSubscribed={isSubscribed} 
                 premiumTicketsViewed={premiumTicketsViewed}
                 onPay={onPay}
@@ -213,7 +219,6 @@ export default function PredictionUpdates({ activeTab, activeFilter, setPredicti
           <MobilePredictionCard 
             key={pred.id} 
             {...pred} 
-            hasPaid={hasPaid} 
             isSubscribed={isSubscribed} 
             premiumTicketsViewed={premiumTicketsViewed}
             onPay={onPay}

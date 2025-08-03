@@ -1,3 +1,5 @@
+// src/lib/profileData.ts
+
 import { Bio, BankDetails, KycDetails, Wallet, Transaction, Ticket, Subscription, NavItem } from './profileType';
 import {
   LayoutDashboard,

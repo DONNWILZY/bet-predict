@@ -1,27 +1,38 @@
+// src/app/premium/PaymentModal.tsx
+
 import React, { useState } from 'react';
-import { X, CreditCard } from 'lucide-react';
-import { Subscription } from '@/lib/premiumTypes';
+import { X, Wallet } from 'lucide-react';
+import { Subscription, User } from '@/lib/premiumTypes';
 
 interface PaymentModalProps {
   ticketId: number;
   price: number;
   subscriptions: Subscription[];
+  user?: User; // Make user optional to handle undefined cases
   onClose: () => void;
   onPaymentSuccess: (ticketId: number, subscriptionId: string | null) => void;
 }
 
-export default function PaymentModal({ ticketId, price, subscriptions, onClose, onPaymentSuccess }: PaymentModalProps) {
+export default function PaymentModal({ ticketId, price, subscriptions, user, onClose, onPaymentSuccess }: PaymentModalProps) {
   const [selectedSubscription, setSelectedSubscription] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'paystack' | 'stripe' | null>(null);
   const [processing, setProcessing] = useState(false);
+  const walletBalance = user?.walletBalance ?? 0; // Fallback to 0 if user is undefined
+  const hasSufficientBalance = walletBalance >= price;
 
   const handlePayment = () => {
-    setProcessing(true);
-    setTimeout(() => {
-      // Simulate payment processing
-      onPaymentSuccess(ticketId, selectedSubscription);
-      setProcessing(false);
-    }, 1000);
+    if (selectedSubscription || hasSufficientBalance) {
+      setProcessing(true);
+      setTimeout(() => {
+        // Simulate payment processing
+        onPaymentSuccess(ticketId, selectedSubscription);
+        setProcessing(false);
+      }, 1000);
+    }
+  };
+
+  const handleAddFunds = () => {
+    // Redirect to wallet top-up page (adjust URL based on your app's routing)
+    window.location.href = '/dashboard/wallet/top-up';
   };
 
   return (
@@ -40,6 +51,27 @@ export default function PaymentModal({ ticketId, price, subscriptions, onClose, 
             <div className="bg-slate-50 p-4 rounded-xl">
               <p className="text-sm text-slate-800">Ticket ID: {ticketId}</p>
               <p className="text-sm text-slate-800">Price: ₦{price}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-slate-600 mb-2">Wallet Balance</h3>
+            <div className="bg-slate-50 p-4 rounded-xl flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Wallet size={16} className="text-slate-600" />
+                <p className="text-sm text-slate-800">
+                  Balance: ₦{walletBalance}
+                  {!user && <span className="text-xs text-red-500 ml-2">(Wallet not available)</span>}
+                </p>
+              </div>
+              {!hasSufficientBalance && (
+                <button
+                  onClick={handleAddFunds}
+                  className="px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  Add Funds
+                </button>
+              )}
             </div>
           </div>
 
@@ -71,34 +103,6 @@ export default function PaymentModal({ ticketId, price, subscriptions, onClose, 
               </div>
             </div>
           )}
-
-          <div>
-            <h3 className="text-sm font-medium text-slate-600 mb-2">Pay Directly</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setPaymentMethod('paystack')}
-                className={`p-3 rounded-xl flex items-center gap-2 ${
-                  paymentMethod === 'paystack'
-                    ? 'bg-blue-50 border border-blue-500'
-                    : 'bg-slate-50 hover:bg-slate-100 border border-slate-200'
-                }`}
-              >
-                <CreditCard size={16} className="text-slate-600" />
-                <span className="text-sm text-slate-800">Paystack</span>
-              </button>
-              <button
-                onClick={() => setPaymentMethod('stripe')}
-                className={`p-3 rounded-xl flex items-center gap-2 ${
-                  paymentMethod === 'stripe'
-                    ? 'bg-blue-50 border border-blue-500'
-                    : 'bg-slate-50 hover:bg-slate-100 border border-slate-200'
-                }`}
-              >
-                <CreditCard size={16} className="text-slate-600" />
-                <span className="text-sm text-slate-800">Stripe</span>
-              </button>
-            </div>
-          </div>
         </div>
 
         <div className="sticky bottom-0 bg-white rounded-b-2xl p-6 border-t border-slate-200">
@@ -113,9 +117,9 @@ export default function PaymentModal({ ticketId, price, subscriptions, onClose, 
             <button
               onClick={handlePayment}
               className={`flex-1 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 ${
-                processing || (!selectedSubscription && !paymentMethod) ? 'opacity-50 cursor-not-allowed' : ''
+                processing || (!selectedSubscription && !hasSufficientBalance) ? 'opacity-50 cursor-not-allowed' : ''
               }`}
-              disabled={processing || (!selectedSubscription && !paymentMethod)}
+              disabled={processing || (!selectedSubscription && !hasSufficientBalance)}
             >
               {processing ? 'Processing...' : 'Confirm Payment'}
             </button>

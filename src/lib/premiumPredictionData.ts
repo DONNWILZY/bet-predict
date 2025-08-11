@@ -1,6 +1,4 @@
-// src/lib/premiumPredictionData.ts
-
-import { Prediction } from './premiumTypes';
+import { Prediction, AnalyticsData } from './premiumTypes';
 
 export const dummyPredictions: Prediction[] = [
   {
@@ -35,7 +33,7 @@ export const dummyPredictions: Prediction[] = [
         stadium: "Allianz Stadium",
         league: "Serie A"
       },
-        {
+      {
         team1: "Bar",
         team2: "Ac",
         logo1: "/juve.png",
@@ -61,13 +59,8 @@ export const dummyPredictions: Prediction[] = [
         stadium: "Allianz Stadium",
         league: "Serie A"
       }
-
     ],
-    premiumTicketsViewed: 0,
-    isSubscribed: false,
-    onPay: function (ticketId: number): void {
-      throw new Error('Function not implemented.');
-    }
+    premiumTicketsViewed: 0
   },
   {
     id: 1,
@@ -141,11 +134,7 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 0,
     paid: false,
-    subscriptionId: null,
-    isSubscribed: false,
-    onPay: function (ticketId: number): void {
-      throw new Error('Function not implemented.');
-    }
+    subscriptionId: null
   },
   {
     id: 2,
@@ -180,11 +169,7 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 1,
     paid: false,
-    subscriptionId: null,
-    isSubscribed: false,
-    onPay: function (ticketId: number): void {
-      throw new Error('Function not implemented.');
-    }
+    subscriptionId: null
   },
   {
     id: 5,
@@ -219,11 +204,7 @@ export const dummyPredictions: Prediction[] = [
     ],
     premiumTicketsViewed: 0,
     paid: false,
-    subscriptionId: null,
-    isSubscribed: false,
-    onPay: function (ticketId: number): void {
-      throw new Error('Function not implemented.');
-    }
+    subscriptionId: null
   }
 ];
 
@@ -246,3 +227,19 @@ export const dummyHighlights = [
   { id: 1, title: "Messi scores stunning free-kick in La Liga", date: "2025-07-07" },
   { id: 2, title: "Premier League upset: Underdog triumphs", date: "2025-07-06" }
 ];
+
+export const dummyAnalytics: AnalyticsData = {
+  totalEarnings: 15000,
+  weeklyTips: [
+    { week: 'Week 1', tips: 10 },
+    { week: 'Week 2', tips: 15 },
+    { week: 'Week 3', tips: 8 },
+    { week: 'Week 4', tips: 12 }
+  ],
+  weeklyEarnings: [
+    { week: 'Week 1', earnings: 3000 },
+    { week: 'Week 2', earnings: 5000 },
+    { week: 'Week 3', earnings: 2000 },
+    { week: 'Week 4', earnings: 4000 }
+  ]
+};

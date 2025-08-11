@@ -1,3 +1,5 @@
+//src\app\premium\BottomNavigation.tsx
+
 import React from 'react';
 import { Home, Users, Bookmark, User } from 'lucide-react';
 import { BottomNavigationProps } from '@/lib/premiumTypes';

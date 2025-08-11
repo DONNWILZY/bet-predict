@@ -1,3 +1,5 @@
+//D:\desktop\NEXTJS\xx\my-app\src\app\premium\leftSidebar.tsx
+ 
 import React, { useState } from 'react';
 import { Search, Trophy, Clock, Users, Shield, ChevronDown, User, Settings, X } from 'lucide-react';
 import { ModernSidebarProps } from '@/lib/premiumTypes';

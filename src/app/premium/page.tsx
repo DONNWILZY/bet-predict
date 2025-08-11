@@ -1,4 +1,4 @@
-//src\app\premium\page.tsx
+// src/app/premium/page.tsx
 
 "use client";
 
@@ -11,7 +11,9 @@ import BottomNavigation from './BottomNavigation';
 import CreateTipModal from './CreateTipModal';
 import NotificationsView from './NotificationsView';
 import PaymentModal from './PaymentModal';
+import UserProfile from './UserProfile';
 import { Prediction, Subscription, User } from '@/lib/premiumTypes';
+import { dummyPredictions } from '@/lib/premiumPredictionData';
 
 export default function PremiumPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,30 +23,61 @@ export default function PremiumPage() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState<number | null>(null);
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>(dummyPredictions);
   const [searchQuery, setSearchQuery] = useState('');
   const [premiumTicketsViewed, setPremiumTicketsViewed] = useState(0);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([
     { id: 'sub_001', name: 'Basic Plan', ticketsRemaining: 5 },
     { id: 'sub_002', name: 'Pro Plan', ticketsRemaining: 10 }
   ]);
-  const [user, setUser] = useState<User>({ walletBalance: 500 }); // Placeholder; fetch from auth or API
+  const [user, setUser] = useState<User>({
+    id: 'user_001',
+    username: 'Current User',
+    avatar: '/user.jpg',
+    bio: 'Passionate about sports betting and analytics.',
+    contact: 'user@example.com',
+    isCreator: true,
+    walletBalance: 500,
+    creatorStats: {
+      rating: 4.8,
+      reviews: 120,
+      totalTickets: 50,
+      totalWins: 40,
+      totalLosses: 10,
+      accuracy: 80,
+      activeTickets: 3
+    },
+    tasks: [
+      { id: 'task_001', description: 'Create 5 accurate games this week', progress: 3, target: 5, reward: 'Level Up' },
+      { id: 'task_002', description: 'Create 30 tickets this week', progress: 15, target: 30, reward: 'Pro Badge' }
+    ]
+  });
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const handleCreateTip = (newPredictionInput: Omit<Prediction, 'id' | 'timestamp' | 'views' | 'likes' | 'premiumTicketsViewed' | 'paid' | 'subscriptionId'>) => {
+  // FIXED & CLEANED: handleCreateTip
+  const handleCreateTip = (
+    newPredictionData: Omit<Prediction, 'id' | 'timestamp' | 'views' | 'likes' | 'premiumTicketsViewed' | 'paid' | 'subscriptionId'>
+  ) => {
     const newId = Math.max(...predictions.map(p => p.id), 0) + 1;
-    const newPrediction: Prediction = {
-      ...newPredictionInput,
+
+    const completePrediction: Prediction = {
+      ...newPredictionData,
       id: newId,
       timestamp: new Date().toISOString(),
       views: 0,
       likes: 0,
-      premiumTicketsViewed: !subscriptions.length ? premiumTicketsViewed + (newPredictionInput.premium ? 1 : 0) : premiumTicketsViewed,
+      premiumTicketsViewed: !subscriptions.length
+        ? premiumTicketsViewed + (newPredictionData.premium ? 1 : 0)
+        : premiumTicketsViewed,
       paid: false,
       subscriptionId: null
     };
-    setPredictions([newPrediction, ...predictions]);
+
+    setPredictions([completePrediction, ...predictions]);
     setShowCreateTipModal(false);
-    if (newPredictionInput.premium && !subscriptions.length) {
+
+    // Increment premium view count if needed
+    if (newPredictionData.premium && !subscriptions.length) {
       setPremiumTicketsViewed(prev => prev + 1);
     }
   };
@@ -57,7 +90,10 @@ export default function PremiumPage() {
   const handlePaymentSuccess = (ticketId: number, subscriptionId: string | null) => {
     if (!subscriptions.length && !subscriptionId) {
       setPremiumTicketsViewed(prev => prev + 1);
-      setUser(prev => ({ ...prev, walletBalance: prev.walletBalance - (predictions.find(p => p.id === ticketId)?.price || 0) }));
+      setUser(prev => ({
+        ...prev,
+        walletBalance: prev.walletBalance - (predictions.find(p => p.id === ticketId)?.price || 0)
+      }));
     }
     if (subscriptionId) {
       setSubscriptions(prev =>
@@ -74,6 +110,43 @@ export default function PremiumPage() {
     setShowPaymentModal(false);
     setSelectedTicketId(null);
   };
+
+  const handleUserClick = (predictor: Prediction['predictor']) => {
+  // Simulate fetching user data; replace with API call in production
+  setSelectedUser({
+    id: `user_${predictor.name.toLowerCase().replace(' ', '_')}`,
+    username: predictor.name,
+    avatar: predictor.avatar,
+    bio: `${predictor.name}'s bio goes here.`,
+    contact: `${predictor.name.toLowerCase().replace(' ', '.')}@example.com`,
+    isCreator: predictor.verified,
+    walletBalance: 0,
+    creatorStats: {
+      rating: predictor.rating,
+      reviews: Math.floor(predictor.followers / 10),
+      totalTickets: predictions.filter(p => p.predictor.name === predictor.name).length,
+      totalWins: predictions
+        .filter(p => p.predictor.name === predictor.name)
+        .reduce((sum, p) => sum + p.games.filter(g => g.status === 'correct').length, 0),
+      totalLosses: predictions
+        .filter(p => p.predictor.name === predictor.name)
+        .reduce((sum, p) => sum + p.games.filter(g => g.status === 'wrong').length, 0),
+      accuracy:
+        (predictions
+          .filter(p => p.predictor.name === predictor.name)
+          .reduce((sum, p) => sum + p.games.filter(g => g.status === 'correct').length, 0) /
+          predictions
+            .filter(p => p.predictor.name === predictor.name)
+            .reduce((sum, p) => sum + p.games.filter(g => g.status).length, 0)) *
+          100 || 0,
+      activeTickets: predictions.filter(p => p.predictor.name === predictor.name && p.games.some(g => !g.status)).length
+    },
+    tasks: [
+      { id: 'task_001', description: 'Create 5 accurate games this week', progress: 3, target: 5, reward: 'Level Up' },
+      { id: 'task_002', description: 'Create 30 tickets this week', progress: 15, target: 30, reward: 'Pro Badge' }
+    ]
+  });
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
@@ -159,7 +232,13 @@ export default function PremiumPage() {
             </div>
 
             <div className="md:p-6">
-              {showNotifications ? (
+              {selectedUser ? (
+                <UserProfile
+                  user={selectedUser}
+                  predictions={predictions.filter(p => p.predictor.name === selectedUser.username)}
+                  onPay={handlePay}
+                />
+              ) : showNotifications ? (
                 <NotificationsView onClose={() => setShowNotifications(false)} />
               ) : showPaymentModal && selectedTicketId ? (
                 <PaymentModal 
@@ -175,12 +254,14 @@ export default function PremiumPage() {
                 />
               ) : (
                 <PredictionUpdates 
-                      activeTab={activeTab}
-                      activeFilter={activeFilter}
-                      setPredictions={setPredictions}
-                      searchQuery={searchQuery}
-                      premiumTicketsViewed={premiumTicketsViewed}
-                      onPay={handlePay} isSubscribed={false}                />
+                  activeTab={activeTab} 
+                  activeFilter={activeFilter} 
+                  setPredictions={setPredictions}
+                  searchQuery={searchQuery}
+                  premiumTicketsViewed={premiumTicketsViewed}
+                  onPay={handlePay}
+                  onUserClick={handleUserClick}
+                />
               )}
             </div>
           </div>

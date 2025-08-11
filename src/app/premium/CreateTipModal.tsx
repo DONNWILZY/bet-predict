@@ -1,10 +1,14 @@
+//src\app\premium\CreateTipModal.tsx
+
+
 import React, { useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import { Prediction, Game } from '@/lib/premiumTypes';
 
 interface CreateTipModalProps {
   onClose: () => void;
-  onSubmit: (prediction: Omit<Prediction, 'id' | 'timestamp' | 'views' | 'likes'>) => void;
+ onSubmit: (prediction: Omit<Prediction, 'id' | 'timestamp' | 'views' | 'likes'> & { isSubscribed: boolean; onPay: (ticketId: number) => void }) => void;
+
 }
 
 export default function CreateTipModal({ onClose, onSubmit }: CreateTipModalProps) {

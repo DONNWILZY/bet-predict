@@ -1,5 +1,3 @@
-// src/lib/premiumTypes.ts
-
 export interface Predictor {
   name: string;
   avatar: string;
@@ -33,9 +31,7 @@ export interface Prediction {
   likes: number;
   confidence: number;
   games: Game[];
-   isSubscribed: boolean;
   premiumTicketsViewed: number;
-  onPay: (ticketId: number) => void;
   paid: boolean;
   subscriptionId: string | null;
 }
@@ -65,5 +61,33 @@ export interface BottomNavigationProps {
 }
 
 export interface User {
+  id: string;
+  username: string;
+  avatar: string;
+  bio: string;
+  contact: string;
+  isCreator: boolean;
   walletBalance: number;
+  creatorStats?: {
+    rating: number;
+    reviews: number;
+    totalTickets: number;
+    totalWins: number;
+    totalLosses: number;
+    accuracy: number;
+    activeTickets: number;
+  };
+  tasks?: {
+    id: string;
+    description: string;
+    progress: number;
+    target: number;
+    reward: string;
+  }[];
+}
+
+export interface AnalyticsData {
+  totalEarnings: number;
+  weeklyTips: { week: string; tips: number }[];
+  weeklyEarnings: { week: string; earnings: number }[];
 }

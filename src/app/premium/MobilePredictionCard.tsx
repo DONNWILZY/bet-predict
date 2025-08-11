@@ -1,12 +1,15 @@
+//src\app\premium\MobilePredictionCard.tsx
+
 import React, { useState } from 'react';
 import { Star, Users, Shield, Heart, Share2, Bookmark, MoreHorizontal, MapPin, Clock, Eye } from 'lucide-react';
 import { Prediction } from '@/lib/premiumTypes';
 
 interface MobilePredictionCardProps extends Prediction {
   onPay: (ticketId: number) => void;
+  onUserClick: (predictor: Prediction['predictor']) => void;
 }
 
-export default function MobilePredictionCard({ id, predictor, premium, price, games, timestamp, views, likes, confidence, onPay, premiumTicketsViewed, paid, subscriptionId }: MobilePredictionCardProps) {
+export default function MobilePredictionCard({ id, predictor, premium, price, games, timestamp, views, likes, confidence, onPay, premiumTicketsViewed, paid, subscriptionId, onUserClick }: MobilePredictionCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [showMore, setShowMore] = useState(false);
@@ -40,8 +43,9 @@ export default function MobilePredictionCard({ id, predictor, premium, price, ga
             <div className="relative">
               <img 
                 src={predictor.avatar} 
-                className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-200" 
+                className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-200 cursor-pointer" 
                 alt={predictor.name}
+                onClick={() => onUserClick(predictor)}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${predictor.name}&background=6366f1&color=fff&size=48`;
                 }}
@@ -54,7 +58,12 @@ export default function MobilePredictionCard({ id, predictor, premium, price, ga
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-slate-800 truncate">{predictor.name}</h3>
+                <h3 
+                  className="font-bold text-slate-800 truncate cursor-pointer hover:text-blue-500"
+                  onClick={() => onUserClick(predictor)}
+                >
+                  {predictor.name}
+                </h3>
                 {predictor.winStreak > 5 && (
                   <span className="bg-orange-100 text-orange-600 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
                     🔥{predictor.winStreak}

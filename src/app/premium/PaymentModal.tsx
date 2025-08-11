@@ -39,7 +39,7 @@ export default function PaymentModal({ ticketId, price, subscriptions, user, onC
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="bg-white rounded-2xl w-full max-w-md mx-4 max-h-[80vh] flex flex-col">
         <div className="sticky top-0 bg-white rounded-t-2xl p-6 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-slate-800">Unlock Premium Tip</h2>
+          <h2 className="text-xl font-bold text-slate-800">Unlock Premium Ticket</h2>
           <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg">
             <X size={20} />
           </button>

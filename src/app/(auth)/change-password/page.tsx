@@ -1,3 +1,5 @@
+//src\app\(auth)\change-password\page.tsx
+
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";

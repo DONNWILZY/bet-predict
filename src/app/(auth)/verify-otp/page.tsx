@@ -45,91 +45,103 @@ const VerifyEmailPage: React.FC = () => {
   }, [resendCooldown]);
 
   // Verify OTP
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
+  // Verify OTP
+const handleVerify = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setMessage("");
 
-    if (!email || otp.length !== 6) {
-      setMessage("Please enter the 6-digit code.");
-      return;
-    }
+  if (!email || otp.length !== 6) {
+    setMessage("Please enter the 6-digit code.");
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
+  try {
+    const response = await fetch(VERIFY_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
+
+    let data: any = {};
     try {
-      const response = await fetch(VERIFY_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
-      });
-
-      let data: any;
-      try {
-        data = await response.json();
-      } catch {
-        const text = await response.text();
-        console.error("Non-JSON response:", text);
-        throw new Error("Server did not return JSON");
-      }
-
-      if (response.ok) {
-        // ✅ Store auth data
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("userId", data.user.id);
-        localStorage.setItem("role", data.user.role);
-
-        setMessage("Email verified successfully! Redirecting...");
-
-        // ✅ Redirect based on role
-        setTimeout(() => {
-          if (data.user.role === "ADMIN") {
-            router.push("/admin");
-          } else {
-            router.push("/dashboard");
-          }
-        }, 1500);
-      } else {
-        setMessage(data.message || "Verification failed. Try again.");
-      }
-    } catch (error: any) {
-      console.error("Verification error:", error);
-      setMessage(error.message || "Network error. Could not connect to server.");
-    } finally {
-      setIsLoading(false);
+      data = await response.json();
+    } catch {
+      data = { message: "Unexpected server response." };
     }
-  };
+
+    if (response.ok) {
+      // ✅ Store auth data
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("role", data.user.role);
+
+      setMessage("Email verified successfully! Redirecting...");
+
+      // ✅ Redirect based on role
+      setTimeout(() => {
+        if (data.user.role === "ADMIN") {
+          router.push("/admin");
+        } else {
+          router.push("/dashboard");
+        }
+      }, 1500);
+    } else {
+      // ✅ Catch server-side errors (invalid/expired OTP, etc.)
+      setMessage(data.message || "Verification failed. Try again.");
+    }
+  } catch (error: any) {
+    console.error("Verification error:", error);
+    setMessage(
+      error.message || "Network error. Could not connect to the server."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   // Resend OTP
-  const handleResend = async () => {
-    if (resendCooldown > 0 || isLoading || !email) return;
+  // Resend OTP
+const handleResend = async () => {
+  if (resendCooldown > 0 || isLoading || !email) return;
 
-    setMessage("");
-    setIsLoading(true);
-    setResendCooldown(RESEND_COOLDOWN_SECONDS);
+  setMessage("");
+  setIsLoading(true);
+  setResendCooldown(RESEND_COOLDOWN_SECONDS);
 
+  try {
+    const response = await fetch(RESEND_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    let data: any = {};
     try {
-      const response = await fetch(RESEND_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("New verification code sent! Check your inbox.");
-      } else {
-        setMessage(data.message || "Failed to resend code.");
-        setResendCooldown(0);
-      }
-    } catch (error: any) {
-      console.error("Resend error:", error);
-      setMessage(error.message || "Network error. Could not connect to server.");
-      setResendCooldown(0);
-    } finally {
-      setIsLoading(false);
+      data = await response.json();
+    } catch {
+      data = { message: "Unexpected server response." };
     }
-  };
+
+    if (response.ok) {
+      setMessage("New verification code sent! Check your inbox.");
+    } else {
+      setMessage(data.message || "Failed to resend code.");
+      setResendCooldown(0); // reset cooldown if failed
+    }
+  } catch (error: any) {
+    console.error("Resend error:", error);
+    setMessage(
+      error.message || "Network error. Could not connect to the server."
+    );
+    setResendCooldown(0); // reset cooldown if failed
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const isFormValid = otp.length === 6 && email && !isLoading;
 

@@ -148,64 +148,76 @@ const SignupPage: React.FC = () => {
     });
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
+ const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setMessage("");
 
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Passwords do not match!");
-      return;
-    }
+  // --- Client-side validation ---
+  if (formData.password !== formData.confirmPassword) {
+    setMessage("Passwords do not match!");
+    return;
+  }
 
-    const passwordFeedback = checkPasswordStrength(formData.password);
-    if (passwordFeedback.startsWith("Weak") || passwordFeedback.startsWith("Password too short")) {
-      setMessage(passwordFeedback);
-      return;
-    }
+  const passwordFeedback = checkPasswordStrength(formData.password);
+  if (
+    passwordFeedback.startsWith("Weak") ||
+    passwordFeedback.startsWith("Password too short")
+  ) {
+    setMessage(passwordFeedback);
+    return;
+  }
 
-    if (!agreedToTerms) {
-      setMessage("Please agree to our terms and conditions");
-      return;
-    }
+  if (!agreedToTerms) {
+    setMessage("Please agree to our terms and conditions");
+    return;
+  }
 
-    setIsLoading(true);
+  setIsLoading(true);
 
+  try {
+    const response = await fetch(SIGNUP_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+      }),
+    });
+
+    // --- Always parse as JSON safely ---
+    let data: any = {};
     try {
-      const response = await fetch(SIGNUP_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          username: formData.username,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-        }),
-      });
-
-      let data: any;
-      try {
-        data = await response.json();
-      } catch {
-        const text = await response.text();
-        throw new Error(text || "Invalid server response");
-      }
-
-      if (response.ok) {
-        setMessage("Account created successfully! Redirecting for email verification...");
-        setTimeout(() => {
-          router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
-        }, 1500);
-      } else {
-        setMessage(data.message || "Signup failed. Please try again.");
-      }
-    } catch (error: any) {
-      console.error("Signup error:", error);
-      setMessage(error.message || "Network error. Could not connect to the server.");
-    } finally {
-      setIsLoading(false);
+      data = await response.json();
+    } catch {
+      data = { message: "Unexpected response from server." };
     }
-  };
+
+    // --- Success ---
+    if (response.ok) {
+      setMessage(
+        "Account created successfully! Redirecting for email verification..."
+      );
+      setTimeout(() => {
+        router.push(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
+      }, 1500);
+      return;
+    }
+
+    // --- Error from backend ---
+    setMessage(data.message || "Signup failed. Please try again.");
+  } catch (error: any) {
+    console.error("Signup error:", error);
+    setMessage(
+      error.message || "Network error. Could not connect to the server."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const passwordStrength = checkPasswordStrength(formData.password);
 

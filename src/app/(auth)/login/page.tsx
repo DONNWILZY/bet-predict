@@ -20,73 +20,78 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    setIsLoading(true);
+  e.preventDefault();
+  setMessage("");
+  setIsLoading(true);
 
+  try {
+    const response = await fetch(LOGIN_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        password,
+        otp: requireOtp ? otp : "", // include OTP if required
+      }),
+    });
+
+    let data: any = {};
     try {
-      const response = await fetch(LOGIN_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          otp: requireOtp ? otp : "", // include OTP if required
-        }),
-      });
-
-      let data: any = {};
-      try {
-        data = await response.clone().json();
-      } catch {
-        data = { message: await response.clone().text() };
-      }
-
-      // --- Handle 2FA or new device OTP ---
-      if (response.status === 403) {
-        const msg = data.message || "";
-        if (
-          msg.includes("2FA verification required") ||
-          msg.includes("New device detected")
-        ) {
-          setMessage("OTP required. Please enter the code sent to your email.");
-          setRequireOtp(true); // 🔑 reveal OTP input
-          return;
-        }
-
-        setMessage(msg || "Access denied.");
-        return;
-      }
-
-      // --- Handle invalid credentials or server error ---
-      if (!response.ok) {
-        setMessage(data.message || "Login failed. Please try again.");
-        return;
-      }
-
-      // --- Successful login ---
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      localStorage.setItem("userId", data.user.id);
-      localStorage.setItem("role", data.user.role);
-
-      setMessage("Login successful! Redirecting...");
-      setTimeout(() => {
-        if (data.user.role === "ADMIN") {
-          router.push("/admin");
-        } else {
-          router.push("/dashboard");
-        }
-      }, 1200);
-    } catch (error: any) {
-      console.error("Login error:", error);
-      setMessage(
-        error.message || "Network error. Could not connect to the server."
-      );
-    } finally {
-      setIsLoading(false);
+      data = await response.clone().json();
+    } catch {
+      data = { message: await response.clone().text() };
     }
-  };
+
+    // --- Handle 2FA or new device OTP ---
+    if (response.status === 403) {
+      const msg = data.message || "";
+      if (
+        msg.includes("2FA verification required") ||
+        msg.includes("New device detected")
+      ) {
+        setMessage("OTP required. Please enter the code sent to your email.");
+        setRequireOtp(true); // 🔑 reveal OTP input
+        return;
+      }
+
+      setMessage(msg || "Access denied.");
+      return;
+    }
+
+    // --- Handle invalid credentials or server error ---
+    if (!response.ok) {
+      setMessage(data.message || "Login failed. Please try again.");
+      return;
+    }
+
+    // --- ✅ Successful login ---
+    // Security-first storage strategy:
+    // - accessToken → sessionStorage (short-lived, cleared on browser close)
+    // - refreshToken → localStorage (long-lived, used to refresh session)
+    // - user object → localStorage (not sensitive, used for role/UI guards)
+
+    sessionStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    setMessage("Login successful! Redirecting...");
+
+    setTimeout(() => {
+      if (data.user.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
+    }, 1200);
+  } catch (error: any) {
+    console.error("Login error:", error);
+    setMessage(
+      error.message || "Network error. Could not connect to the server."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center justify-center p-4">

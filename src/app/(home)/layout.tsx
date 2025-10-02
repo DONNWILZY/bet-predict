@@ -2,7 +2,6 @@
 
 import React from "react";
 import { MatchPredictionsTable } from "./predict";
-import { Navbar } from "./navbar";
 import { SportsBar } from "./SportsMenu";
 
 interface Props {

@@ -566,13 +566,17 @@ export default function UserAnalytics({ analytics }: UserAnalyticsProps) {
                   </div>
                   <div className="text-xs space-y-1">
                     <div className="font-medium text-gray-900">₦{day.earnings}</div>
-                    <div className="text-gray-500">{day.tips} tips</div>
+                    <div className="text-gray-500">{day.tips} Prediction</div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+
+        
+
+
 
         {/* Leaderboard & Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

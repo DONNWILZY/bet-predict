@@ -32,40 +32,40 @@ export default function Profile({
   return (
     <div className="space-y-8">
       {/* Profile Header */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <div className="flex items-start justify-between mb-8">
           <div className="flex items-center gap-6">
             <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">
+              <div className="w-24 h-24 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                 {bio.name
                   .split(' ')
                   .map((n) => n[0])
                   .join('')}
               </div>
-              <button className="absolute -bottom-2 -right-2 p-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-white transition-colors">
+              <button className="absolute -bottom-2 -right-2 p-2 bg-purple-600 hover:bg-purple-700 rounded-xl text-white transition-colors shadow-sm">
                 <User className="w-4 h-4" />
               </button>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">{bio.name}</h2>
-              <p className="text-gray-400 mb-2">{bio.email}</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{bio.name}</h2>
+              <p className="text-gray-600 mb-2">{bio.email}</p>
               <div className="flex items-center gap-3 mb-3">
                 <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(kycStatus)}`}>
                   KYC {kycStatus}
                 </span>
-                <span className="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-sm">
-                  Premium Members
+                <span className="px-3 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-full text-sm">
+                  Creator
                 </span>
               </div>
-              <p className="text-gray-300 text-sm max-w-md">{bio.bio}</p>
+              <p className="text-gray-600 text-sm max-w-md">{bio.bio}</p>
             </div>
           </div>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl font-medium transition-colors shadow-sm ${
               isEditing
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                : 'bg-blue-600 hover:bg-blue-500 text-white'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
             }`}
           >
             {isEditing ? 'Save Changes' : 'Edit Profile'}
@@ -74,16 +74,16 @@ export default function Profile({
       </div>
 
       {/* Personal Information */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
-        <h3 className="text-xl font-semibold text-white mb-6">Personal Information</h3>
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+        <h3 className="text-xl font-semibold text-gray-900 mb-6">Personal Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.name}
               onChange={(e) => isEditing && setBio({ ...bio, name: e.target.value })}
@@ -91,12 +91,12 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.email}
               onChange={(e) => isEditing && setBio({ ...bio, email: e.target.value })}
@@ -104,12 +104,12 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.phone}
               onChange={(e) => isEditing && setBio({ ...bio, phone: e.target.value })}
@@ -117,13 +117,13 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
             <input
               type="date"
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.dateOfBirth}
               onChange={(e) => isEditing && setBio({ ...bio, dateOfBirth: e.target.value })}
@@ -131,12 +131,12 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.location}
               onChange={(e) => isEditing && setBio({ ...bio, location: e.target.value })}
@@ -144,12 +144,12 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Gender</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
             <select
-              className={`w-full p-4 rounded-xl border text-white transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.gender}
               onChange={(e) => isEditing && setBio({ ...bio, gender: e.target.value })}
@@ -161,12 +161,12 @@ export default function Profile({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Occupation</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.occupation}
               onChange={(e) => isEditing && setBio({ ...bio, occupation: e.target.value })}
@@ -174,13 +174,13 @@ export default function Profile({
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
             <textarea
               rows={4}
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all resize-none ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all resize-none ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.bio}
               onChange={(e) => isEditing && setBio({ ...bio, bio: e.target.value })}
@@ -192,21 +192,21 @@ export default function Profile({
       </div>
 
       {/* Bank Account Details */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-emerald-500/20 rounded-xl">
-            <CreditCard className="w-5 h-5 text-emerald-400" />
+          <div className="p-2 bg-emerald-50 rounded-xl">
+            <CreditCard className="w-5 h-5 text-emerald-600" />
           </div>
-          <h3 className="text-xl font-semibold text-white">Bank Account Details</h3>
+          <h3 className="text-xl font-semibold text-gray-900">Bank Account Details</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Bank Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
             <select
-              className={`w-full p-4 rounded-xl border text-white transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.bankName}
               onChange={(e) =>
@@ -224,12 +224,12 @@ export default function Profile({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Account Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.accountName}
               onChange={(e) =>
@@ -240,12 +240,12 @@ export default function Profile({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Account Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
             <input
-              className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+              className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                 isEditing
-                  ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                  ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.accountNumber}
               onChange={(e) =>
@@ -260,8 +260,8 @@ export default function Profile({
             <button
               className={`w-full px-6 py-4 rounded-xl font-medium transition-colors ${
                 isEditing
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                  : 'bg-white/5 text-gray-400 cursor-not-allowed'
+                  ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }`}
               disabled={!isEditing}
             >
@@ -272,13 +272,13 @@ export default function Profile({
       </div>
 
       {/* KYC Verification */}
-      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-500/20 rounded-xl">
-              <ShieldCheck className="w-5 h-5 text-amber-400" />
+            <div className="p-2 bg-amber-50 rounded-xl">
+              <ShieldCheck className="w-5 h-5 text-amber-600" />
             </div>
-            <h3 className="text-xl font-semibold text-white">KYC Verification</h3>
+            <h3 className="text-xl font-semibold text-gray-900">KYC Verification</h3>
           </div>
           <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(kycStatus)}`}>
             {kycStatus}
@@ -288,12 +288,12 @@ export default function Profile({
         {kycStatus !== 'Verified' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Document Type</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Document Type</label>
               <select
-                className={`w-full p-4 rounded-xl border text-white transition-all ${
+                className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
                   isEditing
-                    ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                    : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                    ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                    : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
                 }`}
                 value={kycDetails.type}
                 onChange={(e) => isEditing && setKycDetails({ ...kycDetails, type: e.target.value })}
@@ -307,12 +307,12 @@ export default function Profile({
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Document Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Document Number</label>
               <input
-                className={`w-full p-4 rounded-xl border text-white placeholder-gray-400 transition-all ${
+                className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
                   isEditing
-                    ? 'bg-white/5 border-white/10 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20'
-                  : 'bg-white/5 border-white/5 cursor-not-allowed opacity-60'
+                    ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
+                  : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
                 }`}
                 value={kycDetails.number}
                 onChange={(e) =>
@@ -323,19 +323,19 @@ export default function Profile({
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Upload Document
               </label>
               <div
                 className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
                   isEditing
-                    ? 'border-white/20 hover:border-blue-500/50 cursor-pointer'
-                    : 'border-white/10 cursor-not-allowed opacity-60'
+                    ? 'border-gray-300 hover:border-purple-400 cursor-pointer bg-gray-50'
+                    : 'border-gray-200 cursor-not-allowed opacity-60 bg-gray-50'
                 }`}
               >
                 <FileText className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-300 mb-2">Click to upload or drag and drop</p>
-                <p className="text-gray-400 text-sm">PNG, JPG, PDF up to 5MB</p>
+                <p className="text-gray-600 mb-2">Click to upload or drag and drop</p>
+                <p className="text-gray-500 text-sm">PNG, JPG, PDF up to 5MB</p>
                 <input
                   type="file"
                   className="hidden"
@@ -353,7 +353,7 @@ export default function Profile({
             </div>
             {isEditing && (
               <div className="md:col-span-2">
-                <button className="w-full bg-amber-600 hover:bg-amber-500 text-white px-6 py-4 rounded-xl font-medium transition-colors">
+                <button className="w-full bg-amber-600 hover:bg-amber-700 text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-sm">
                   Submit KYC Documents
                 </button>
               </div>
@@ -363,11 +363,11 @@ export default function Profile({
 
         {kycStatus === 'Verified' && (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShieldCheck className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ShieldCheck className="w-8 h-8 text-emerald-600" />
             </div>
-            <h4 className="text-lg font-semibold text-white mb-2">Verification Complete</h4>
-            <p className="text-gray-400">Your identity has been verified successfully.</p>
+            <h4 className="text-lg font-semibold text-gray-900 mb-2">Verification Complete</h4>
+            <p className="text-gray-600">Your identity has been verified successfully.</p>
           </div>
         )}
       </div>

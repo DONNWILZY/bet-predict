@@ -1,5 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -120,3 +125,6 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+

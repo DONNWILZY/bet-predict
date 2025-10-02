@@ -45,7 +45,7 @@ const VerifyEmailPage: React.FC = () => {
   }, [resendCooldown]);
 
   // Verify OTP
-  // Verify OTP
+
 const handleVerify = async (e: React.FormEvent) => {
   e.preventDefault();
   setMessage("");
@@ -71,11 +71,13 @@ const handleVerify = async (e: React.FormEvent) => {
     }
 
     if (response.ok) {
-      // ✅ Store auth data
-      localStorage.setItem("accessToken", data.accessToken);
+      // ✅ Secure storage strategy:
+      // - accessToken → sessionStorage (short-lived)
+      // - refreshToken → localStorage (long-lived)
+      // - user object → localStorage (safe metadata for UI/guards)
+      sessionStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
-      localStorage.setItem("userId", data.user.id);
-      localStorage.setItem("role", data.user.role);
+      localStorage.setItem("user", JSON.stringify(data.user));
 
       setMessage("Email verified successfully! Redirecting...");
 
@@ -88,7 +90,7 @@ const handleVerify = async (e: React.FormEvent) => {
         }
       }, 1500);
     } else {
-      // ✅ Catch server-side errors (invalid/expired OTP, etc.)
+      // ❌ Handle invalid/expired OTP
       setMessage(data.message || "Verification failed. Try again.");
     }
   } catch (error: any) {
@@ -102,7 +104,6 @@ const handleVerify = async (e: React.FormEvent) => {
 };
 
 
-  // Resend OTP
   // Resend OTP
 const handleResend = async () => {
   if (resendCooldown > 0 || isLoading || !email) return;

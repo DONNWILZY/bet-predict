@@ -29,7 +29,7 @@ import {
   Medal
 } from "lucide-react";
 
-// Mock analytics data type
+//analytics data type
 interface AnalyticsData {
   totalEarnings: number;
   weeklyTips: Array<{ week: string; tips: number }>;
@@ -183,7 +183,7 @@ export default function UserAnalytics({ analytics }: UserAnalyticsProps) {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  Analytics Dashboard
+                  Analytics 
                 </h1>
                 <p className="text-sm text-gray-500">Level {userStats.level} • Rank #{userStats.rank.toLocaleString()}</p>
               </div>
@@ -197,7 +197,7 @@ export default function UserAnalytics({ analytics }: UserAnalyticsProps) {
               </button>
               <button className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transition-all">
                 <Download className="w-4 h-4 inline mr-2" />
-                Export
+                Export 
               </button>
             </div>
           </div>
@@ -346,7 +346,7 @@ export default function UserAnalytics({ analytics }: UserAnalyticsProps) {
           </div>
         </div>
 
-        {/* Enhanced Tasks Section */}
+        {/* Tasks Section */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">

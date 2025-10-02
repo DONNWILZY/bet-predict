@@ -108,7 +108,7 @@ export function MatchPredictionsTable() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Sidebar - Blue Theme */}
           <div className="lg:col-span-3">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-xl p-6 sticky top-6 text-white">
+            <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl shadow-xl p-6 sticky top-6 text-white">
               <h2 className="text-lg font-bold mb-4 flex items-center">
                 <Trophy className="w-5 h-5 mr-2" />
                 Predictions Menu
@@ -132,8 +132,8 @@ export function MatchPredictionsTable() {
                         onClick={() => handleContentChange('nigerian', type)}
                         className={`block w-full text-left text-sm py-2 px-3 rounded-lg transition-all ${
                           selectedContent === 'nigerian' && selectedPredictionType === type
-                            ? 'bg-blue-500 text-white font-medium'
-                            : 'text-blue-100 hover:bg-blue-700'
+                            ? 'bg-purple-500 text-white font-medium'
+                            : 'text-blue-100 hover:bg-purple-700'
                         }`}
                       >
                         {type}
@@ -161,8 +161,8 @@ export function MatchPredictionsTable() {
                           onClick={() => handleContentChange(timeFrame.key)}
                           className={`block w-full text-left text-sm py-2 px-3 rounded-lg transition-all ${
                             selectedContent === timeFrame.key
-                              ? 'bg-blue-500 text-white font-medium'
-                              : 'text-blue-100 hover:bg-blue-700'
+                              ? 'bg-violet-600 text-white font-medium'
+                              : 'text-blue-100 hover:bg-purple-700'
                           }`}
                         >
                           {timeFrame.label}
@@ -175,8 +175,8 @@ export function MatchPredictionsTable() {
                                 onClick={() => handleContentChange(timeFrame.key, type)}
                                 className={`block w-full text-left text-xs py-1 px-2 rounded transition-all ${
                                   selectedPredictionType === type
-                                    ? 'bg-blue-400 text-white'
-                                    : 'text-blue-200 hover:bg-blue-700'
+                                    ? 'bg-violet-800 text-white'
+                                    : 'text-blue-200 hover:bg-purple-700'
                                 }`}
                               >
                                 {type}
@@ -214,7 +214,7 @@ export function MatchPredictionsTable() {
                                   handleContentChange(`league-${league.toLowerCase().replace(/\s+/g, '-')}`);
                                 }
                               }}
-                              className="block w-full text-left text-xs py-1 px-2 rounded text-blue-100 hover:bg-blue-700 transition-colors"
+                              className="block w-full text-left text-xs py-1 px-2 rounded text-blue-100 hover:bg-purple-700 transition-colors"
                             >
                               {league}
                             </button>
@@ -232,7 +232,7 @@ export function MatchPredictionsTable() {
           <div className="lg:col-span-6">
             <div className="w-full bg-white rounded-2xl shadow-2xl overflow-x-auto border border-gray-100">
               {/* Content Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+              <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white p-6">
                 <h2 className="text-xl font-bold flex items-center">
                   <Clock className="w-5 h-5 mr-2" />
                   {getContentTitle()}
@@ -272,16 +272,16 @@ export function MatchPredictionsTable() {
                         <span className="font-medium text-gray-800">{match.teamB}</span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium mr-2 hover:bg-blue-200 transition-colors">
+                        <span className="inline-block bg-blue-100 text-violet-600 px-3 py-1 rounded-full text-sm font-medium mr-2 hover:bg-blue-200 transition-colors">
                           {match.oddsA}
                         </span>
                         <span className="text-gray-400 mx-1">/</span>
-                        <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors">
+                        <span className="inline-block bg-blue-100 text-violet-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors">
                           {match.oddsB}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="font-semibold text-indigo-600">
+                        <span className="font-semibold text-violet-700">
                           {match.prediction === 'A' ? match.teamA : match.teamB}
                         </span>
                       </td>
@@ -310,11 +310,11 @@ export function MatchPredictionsTable() {
               {/* Calendar Widget */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Calendar className="w-5 h-5 text-blue-600 mr-2" />
+                  <Calendar className="w-5 h-5 text-violet-600 mr-2" />
                   Calendar
                 </h3>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">July 2025</div>
+                  <div className="text-2xl font-bold text-violet-600">July 2025</div>
                   <div className="grid grid-cols-7 gap-1 mt-4 text-xs">
                     {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
                       <div key={`${day}-${index}`} className="p-2 text-center font-medium text-gray-600">
@@ -325,7 +325,7 @@ export function MatchPredictionsTable() {
                       <div
                         key={i + 1}
                         className={`p-2 text-center cursor-pointer rounded ${
-                          i + 1 === 4 ? 'bg-blue-600 text-white' : 'hover:bg-gray-100'
+                          i + 1 === 4 ? 'bg-violet-600 text-white' : 'hover:bg-gray-100'
                         }`}
                       >
                         {i + 1}
@@ -338,7 +338,7 @@ export function MatchPredictionsTable() {
               {/* Featured Leagues */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Trophy className="w-5 h-5 text-blue-600 mr-2" />
+                  <Trophy className="w-5 h-5 text-violet-600 mr-2" />
                   Featured Leagues
                 </h3>
                 <div className="space-y-3">
@@ -357,7 +357,7 @@ export function MatchPredictionsTable() {
               {/* Active Season Results */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <TrendingUp className="w-5 h-5 text-blue-600 mr-2" />
+                  <TrendingUp className="w-5 h-5 text-violet-600 mr-2" />
                   Success Rate
                 </h3>
                 <div className="space-y-3">
@@ -371,11 +371,11 @@ export function MatchPredictionsTable() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">This Month</span>
-                    <span className="font-bold text-blue-600">69%</span>
+                    <span className="font-bold text-violet-600">69%</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Overall</span>
-                    <span className="font-bold text-blue-600">71%</span>
+                    <span className="font-bold text-violet-600">71%</span>
                   </div>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export function MatchPredictionsTable() {
               {/* News Updates */}
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                  <Bell className="w-5 h-5 text-blue-600 mr-2" />
+                  <Bell className="w-5 h-5 text-violet-600 mr-2" />
                   Latest Updates
                 </h3>
                 <div className="space-y-3">
@@ -392,7 +392,7 @@ export function MatchPredictionsTable() {
                     { title: 'Weekend predictions now available', time: '5 hours ago' },
                     { title: 'Nigerian League coverage expanded', time: '1 day ago' },
                   ].map((update, idx) => (
-                    <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
+                    <div key={idx} className="border-l-4 border-violet-500 pl-4 py-2">
                       <div className="text-sm font-medium text-gray-800">{update.title}</div>
                       <div className="text-xs text-gray-500">{update.time}</div>
                     </div>

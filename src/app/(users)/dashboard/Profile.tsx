@@ -29,6 +29,28 @@ export default function Profile({
   setIsEditing,
   getStatusColor,
 }: ProfileProps) {
+  const [isEditingProfile, setIsEditingProfile] = React.useState(false);
+  const [isEditingBank, setIsEditingBank] = React.useState(false);
+  const [isEditingKyc, setIsEditingKyc] = React.useState(false);
+
+  const handleSaveProfile = () => {
+    setIsEditingProfile(false);
+    // Add your save logic here (e.g., API call)
+    console.log('Profile saved:', bio);
+  };
+
+  const handleSaveBank = () => {
+    setIsEditingBank(false);
+    // Add your save logic here (e.g., API call)
+    console.log('Bank details saved:', bankDetails);
+  };
+
+  const handleSaveKyc = () => {
+    setIsEditingKyc(false);
+    // Add your save logic here (e.g., API call)
+    console.log('KYC details saved:', kycDetails);
+  };
+
   return (
     <div className="space-y-8">
       {/* Profile Header */}
@@ -60,60 +82,62 @@ export default function Profile({
               <p className="text-gray-600 text-sm max-w-md">{bio.bio}</p>
             </div>
           </div>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className={`px-6 py-3 rounded-xl font-medium transition-colors shadow-sm ${
-              isEditing
-                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-            }`}
-          >
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </button>
         </div>
       </div>
 
       {/* Personal Information */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6">Personal Information</h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold text-gray-900">Personal Information</h3>
+          <button
+            onClick={() => isEditingProfile ? handleSaveProfile() : setIsEditingProfile(true)}
+            className={`px-6 py-3 rounded-xl font-medium transition-colors shadow-sm ${
+              isEditingProfile
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+          >
+            {isEditingProfile ? 'Save Changes' : 'Edit'}
+          </button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.name}
-              onChange={(e) => isEditing && setBio({ ...bio, name: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, name: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.email}
-              onChange={(e) => isEditing && setBio({ ...bio, email: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, email: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.phone}
-              onChange={(e) => isEditing && setBio({ ...bio, phone: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, phone: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div>
@@ -121,39 +145,39 @@ export default function Profile({
             <input
               type="date"
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.dateOfBirth}
-              onChange={(e) => isEditing && setBio({ ...bio, dateOfBirth: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, dateOfBirth: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.location}
-              onChange={(e) => isEditing && setBio({ ...bio, location: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, location: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
             <select
               className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.gender}
-              onChange={(e) => isEditing && setBio({ ...bio, gender: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, gender: e.target.value })}
+              disabled={!isEditingProfile}
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -164,13 +188,13 @@ export default function Profile({
             <label className="block text-sm font-medium text-gray-700 mb-2">Occupation</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.occupation}
-              onChange={(e) => isEditing && setBio({ ...bio, occupation: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, occupation: e.target.value })}
+              disabled={!isEditingProfile}
             />
           </div>
           <div className="md:col-span-2">
@@ -178,13 +202,13 @@ export default function Profile({
             <textarea
               rows={4}
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all resize-none ${
-                isEditing
+                isEditingProfile
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bio.bio}
-              onChange={(e) => isEditing && setBio({ ...bio, bio: e.target.value })}
-              disabled={!isEditing}
+              onChange={(e) => isEditingProfile && setBio({ ...bio, bio: e.target.value })}
+              disabled={!isEditingProfile}
               placeholder="Tell us about yourself..."
             />
           </div>
@@ -193,26 +217,38 @@ export default function Profile({
 
       {/* Bank Account Details */}
       <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-emerald-50 rounded-xl">
-            <CreditCard className="w-5 h-5 text-emerald-600" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-50 rounded-xl">
+              <CreditCard className="w-5 h-5 text-emerald-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">Bank Account Details</h3>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900">Bank Account Details</h3>
+          <button
+            onClick={() => isEditingBank ? handleSaveBank() : setIsEditingBank(true)}
+            className={`px-6 py-3 rounded-xl font-medium transition-colors shadow-sm ${
+              isEditingBank
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+          >
+            {isEditingBank ? 'Save Changes' : 'Edit'}
+          </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
             <select
               className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
-                isEditing
+                isEditingBank
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.bankName}
               onChange={(e) =>
-                isEditing && setBankDetails({ ...bankDetails, bankName: e.target.value })
+                isEditingBank && setBankDetails({ ...bankDetails, bankName: e.target.value })
               }
-              disabled={!isEditing}
+              disabled={!isEditingBank}
             >
               <option value="">Select Bank</option>
               <option value="First Bank of Nigeria">First Bank of Nigeria</option>
@@ -227,15 +263,15 @@ export default function Profile({
             <label className="block text-sm font-medium text-gray-700 mb-2">Account Name</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingBank
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.accountName}
               onChange={(e) =>
-                isEditing && setBankDetails({ ...bankDetails, accountName: e.target.value })
+                isEditingBank && setBankDetails({ ...bankDetails, accountName: e.target.value })
               }
-              disabled={!isEditing}
+              disabled={!isEditingBank}
               placeholder="Account holder name"
             />
           </div>
@@ -243,15 +279,15 @@ export default function Profile({
             <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
             <input
               className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                isEditing
+                isEditingBank
                   ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
               }`}
               value={bankDetails.accountNumber}
               onChange={(e) =>
-                isEditing && setBankDetails({ ...bankDetails, accountNumber: e.target.value })
+                isEditingBank && setBankDetails({ ...bankDetails, accountNumber: e.target.value })
               }
-              disabled={!isEditing}
+              disabled={!isEditingBank}
               placeholder="10-digit account number"
               maxLength={10}
             />
@@ -259,11 +295,11 @@ export default function Profile({
           <div className="flex items-end">
             <button
               className={`w-full px-6 py-4 rounded-xl font-medium transition-colors ${
-                isEditing
+                isEditingBank
                   ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
                   : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }`}
-              disabled={!isEditing}
+              disabled={!isEditingBank}
             >
               Verify Account
             </button>
@@ -280,9 +316,23 @@ export default function Profile({
             </div>
             <h3 className="text-xl font-semibold text-gray-900">KYC Verification</h3>
           </div>
-          <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(kycStatus)}`}>
-            {kycStatus}
-          </span>
+          <div className="flex items-center gap-3">
+            <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(kycStatus)}`}>
+              {kycStatus}
+            </span>
+            {kycStatus !== 'Verified' && (
+              <button
+                onClick={() => isEditingKyc ? handleSaveKyc() : setIsEditingKyc(true)}
+                className={`px-6 py-3 rounded-xl font-medium transition-colors shadow-sm ${
+                  isEditingKyc
+                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                {isEditingKyc ? 'Save Changes' : 'Edit'}
+              </button>
+            )}
+          </div>
         </div>
 
         {kycStatus !== 'Verified' && (
@@ -291,13 +341,13 @@ export default function Profile({
               <label className="block text-sm font-medium text-gray-700 mb-2">Document Type</label>
               <select
                 className={`w-full p-4 rounded-xl border text-gray-900 transition-all ${
-                  isEditing
+                  isEditingKyc
                     ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                     : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
                 }`}
                 value={kycDetails.type}
-                onChange={(e) => isEditing && setKycDetails({ ...kycDetails, type: e.target.value })}
-                disabled={!isEditing}
+                onChange={(e) => isEditingKyc && setKycDetails({ ...kycDetails, type: e.target.value })}
+                disabled={!isEditingKyc}
               >
                 <option value="">Select Document Type</option>
                 <option value="national_id">National ID</option>
@@ -310,15 +360,15 @@ export default function Profile({
               <label className="block text-sm font-medium text-gray-700 mb-2">Document Number</label>
               <input
                 className={`w-full p-4 rounded-xl border text-gray-900 placeholder-gray-400 transition-all ${
-                  isEditing
+                  isEditingKyc
                     ? 'bg-white border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200'
                   : 'bg-gray-50 border-gray-200 cursor-not-allowed opacity-60'
                 }`}
                 value={kycDetails.number}
                 onChange={(e) =>
-                  isEditing && setKycDetails({ ...kycDetails, number: e.target.value })
+                  isEditingKyc && setKycDetails({ ...kycDetails, number: e.target.value })
                 }
-                disabled={!isEditing}
+                disabled={!isEditingKyc}
                 placeholder="Enter document number"
               />
             </div>
@@ -328,7 +378,7 @@ export default function Profile({
               </label>
               <div
                 className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
-                  isEditing
+                  isEditingKyc
                     ? 'border-gray-300 hover:border-purple-400 cursor-pointer bg-gray-50'
                     : 'border-gray-200 cursor-not-allowed opacity-60 bg-gray-50'
                 }`}
@@ -339,10 +389,10 @@ export default function Profile({
                 <input
                   type="file"
                   className="hidden"
-                  disabled={!isEditing}
+                  disabled={!isEditingKyc}
                   accept=".png,.jpg,.jpeg,.pdf"
                   onChange={(e) =>
-                    isEditing &&
+                    isEditingKyc &&
                     setKycDetails({
                       ...kycDetails,
                       document: e.target.files ? e.target.files[0] : null,
@@ -351,9 +401,12 @@ export default function Profile({
                 />
               </div>
             </div>
-            {isEditing && (
+            {isEditingKyc && (
               <div className="md:col-span-2">
-                <button className="w-full bg-amber-600 hover:bg-amber-700 text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-sm">
+                <button 
+                  onClick={handleSaveKyc}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-sm"
+                >
                   Submit KYC Documents
                 </button>
               </div>

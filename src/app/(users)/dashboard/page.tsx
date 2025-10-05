@@ -1,5 +1,7 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { requireRole } from "@/lib/auth/checkAuth";
 import {
   User,
   FileText,
@@ -37,7 +39,6 @@ import {
   defaultBankDetails,
   defaultKycDetails,
   defaultWallet,
-  transactions,
   myTickets,
   purchasedTickets,
   subscriptions,
@@ -50,8 +51,116 @@ import Transaction from './Transaction';
 import Tickets from './Tickets';
 import SubscriptionComponent from './Subscription';
 
+// Constants for storage keys and API URL
+const ACCESS_TOKEN_KEY = "accessToken";
+const USER_KEY = "user";
+const API_URL = "http://127.0.0.1:5000";
+
+// Function to fetch user profile
+async function fetchUserProfile() {
+  try {
+    const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    const userData = JSON.parse(localStorage.getItem(USER_KEY) || "{}");
+
+    if (!accessToken || !userData.id) {
+      throw new Error("Access token or user ID not found");
+    }
+
+    const response = await fetch(`${API_URL}/api/user/profile`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.success && data.code === 200) {
+      return data.profile;
+    } else {
+      throw new Error(data.message || "Failed to fetch profile");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user profile:", error.message);
+    } else {
+      console.error("Error fetching user profile:", error);
+    }
+    throw error;
+  }
+}
+
+// Function to fetch recent transactions (limited to 5)
+async function fetchUserTransactions() {
+  try {
+    const accessToken = sessionStorage.getItem(ACCESS_TOKEN_KEY);
+    const userData = JSON.parse(localStorage.getItem(USER_KEY) || "{}");
+
+    if (!accessToken || !userData.id) {
+      throw new Error("Access token or user ID not found");
+    }
+
+    const response = await fetch(`${API_URL}/api/transactions/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.success) {
+      // Assuming response is { success: true, transactions: [...] }
+      // Limit to 5 transactions
+      return data.transactions.slice(0, 5).map((tx: { id: any; type: any; date: string | number | Date; amount: any; status: any; }) => ({
+        id: tx.id,
+        type: tx.type, // e.g., "Deposit", "Withdrawal"
+        date: new Date(tx.date).toLocaleDateString(), // Format date
+        time: new Date(tx.date).toLocaleTimeString(), // Format time
+        amount: tx.amount, // Numeric amount
+        status: tx.status // e.g., "Completed", "Pending"
+      }));
+    } else {
+      throw new Error(data.message || "Failed to fetch transactions");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching user transactions:", error.message);
+    } else {
+      console.error("Error fetching user transactions:", error);
+    }
+    throw error;
+  }
+}
 
 export default function ModernDashboard() {
+  // AUTHENTICATION MIDDLEWARE
+  const router = useRouter();
+  const auth = requireRole(["USER", "ADMIN", "SUPERADMIN"], {
+    name: '',
+    email: '',
+  });
+
+  useEffect(() => {
+    if (!auth.isAuthenticated && auth.redirect) router.push(auth.redirect);
+    if (auth.unauthorized) router.push("/unauthorized");
+  }, [auth, router]);
+
+  if (auth.unauthorized) return null;
+  if (!auth.isAuthenticated) return null;
+
+  // AUTHENTICATION MIDDLEWARE END
+
   const [activeTab, setActiveTab] = useState('overview');
   const [showBalance, setShowBalance] = useState(true);
   const [bio, setBio] = useState<Bio>(defaultBio);
@@ -61,7 +170,74 @@ export default function ModernDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [wallet, setWallet] = useState<Wallet>(defaultWallet);
   const [ticketTab, setTicketTab] = useState<'my' | 'purchased'>('my');
+  const [transactions, setTransactions] = useState<TransactionType[]>([]);
+
   const isPredictor = true;
+
+  // Fetch profile and transactions on mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        // Fetch profile data
+        const profile = await fetchUserProfile();
+        setKycStatus(profile.kyc.status || 'Pending');
+        setWallet({
+          id: profile.wallet.id,
+          userId: profile.wallet.userId,
+          balance: profile.wallet.balance,
+          earning: profile.wallet.earning,
+          points: profile.wallet.points || 0,
+        });
+        setBio({
+          name: profile.name || defaultBio.name,
+          phone: profile.phone || defaultBio.phone,
+          dateOfBirth: profile.dateOfBirth || defaultBio.dateOfBirth,
+          location: profile.location || defaultBio.location,
+          bio: profile.bio || defaultBio.bio,
+          gender: profile.gender || defaultBio.gender,
+          occupation: profile.occupation || defaultBio.occupation,
+          interests: profile.interests || defaultBio.interests,
+          email: profile.email || defaultBio.email,
+          interest: profile.interest || defaultBio.interest,
+        });
+
+        setBankDetails({
+          id: profile.bankDetails.id,
+          userId: profile.bankDetails.userId,
+          bankName: profile.bankDetails.bankName,
+          accountName: profile.bankDetails.accountName,
+          accountNumber: profile.bankDetails.accountNumber,
+        });
+        setKycDetails({
+          id: profile.kycDetails.id,
+          userId: profile.kycDetails.userId,
+          type: profile.kycDetails.type,
+          number: profile.kycDetails.number,
+          document: profile.kycDetails.document,
+          status: profile.kycDetails.status,
+          note: profile.kycDetails.note,
+        });
+
+        // Fetch recent transactions
+        const fetchedTransactions = await fetchUserTransactions();
+        setTransactions(fetchedTransactions);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Failed to load data:", error.message);
+        } else {
+          console.error("Failed to load data:", error);
+        }
+        // Use default values as fallback
+        setKycStatus('Pending');
+        setWallet(defaultWallet);
+        setBio(defaultBio);
+        setBankDetails(defaultBankDetails);
+        setKycDetails(defaultKycDetails);
+        setTransactions([]);
+      }
+    }
+    loadData();
+  }, []);
 
   const getStatusColor = (status: Status): string => {
     const colors: Record<Status, string> = {
@@ -72,7 +248,13 @@ export default function ModernDashboard() {
       Lost: 'bg-red-50 text-red-700 border-red-200',
       Active: 'bg-purple-50 text-purple-700 border-purple-200',
       Expired: 'bg-gray-50 text-gray-600 border-gray-200',
-      Verified: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      APPROVED: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      Approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      DECLINED: "bg-red-50 text-red-700 border-red-200",
+      Declined: "bg-red-50 text-red-700 border-red-200",
+      Reviewing: "bg-amber-50 text-amber-700 border-amber-200",
+      REVIEWING: "bg-amber-50 text-amber-700 border-amber-200",
+      PENDING: "bg-amber-50 text-amber-700 border-amber-200"
     };
     return colors[status] || 'bg-gray-50 text-gray-600 border-gray-200';
   };
@@ -96,9 +278,7 @@ export default function ModernDashboard() {
           <Icon className="w-5 h-5 text-purple-600" />
         </div>
         <div
-          className={`flex items-center gap-1 text-xs font-medium ${
-            trend === 'up' ? 'text-emerald-600' : 'text-red-600'
-          }`}
+          className={`flex items-center gap-1 text-xs font-medium ${trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}
         >
           {trend === 'up' ? (
             <TrendingUp className="w-3 h-3" />
@@ -122,7 +302,7 @@ export default function ModernDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Welcome back, {bio.name.split(' ')[0]}! 👋
+              Welcome back, {auth.user.name}! 👋
             </h1>
             <p className="text-gray-600">Here's what's happening with your account today.</p>
           </div>
@@ -131,10 +311,13 @@ export default function ModernDashboard() {
               <Bell className="w-5 h-5 text-gray-700" />
             </button>
             <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center text-white font-semibold shadow-lg">
-              {bio.name
-                .split(' ')
-                .map((n) => n[0])
-                .join('')}
+              {auth.user?.name
+                ? auth.user.name
+                  .split(' ')
+                  .map((n: string) => n[0])
+                  .join('')
+                  .toUpperCase()
+                : 'NN'}
             </div>
           </div>
         </div>
@@ -229,50 +412,51 @@ export default function ModernDashboard() {
           </button>
         </div>
         <div className="space-y-4">
-          {transactions.slice(0, 3).map((tx) => (
-            <div
-              key={tx.id}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex items-center gap-4">
-                <div
-                  className={`p-2 rounded-xl ${
-                    tx.type === 'Deposit'
-                      ? 'bg-emerald-50'
-                      : tx.type === 'Withdrawal'
-                      ? 'bg-red-50'
-                      : 'bg-purple-50'
-                  }`}
-                >
-                  {tx.type === 'Deposit' ? (
-                    <ArrowDownCircle className="w-4 h-4 text-emerald-600" />
-                  ) : tx.type === 'Withdrawal' ? (
-                    <ArrowUpCircle className="w-4 h-4 text-red-600" />
-                  ) : (
-                    <Activity className="w-4 h-4 text-purple-600" />
-                  )}
+          {transactions.length > 0 ? (
+            transactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`p-2 rounded-xl ${tx.type === 'Deposit'
+                        ? 'bg-emerald-50'
+                        : tx.type === 'Withdrawal'
+                          ? 'bg-red-50'
+                          : 'bg-purple-50'
+                      }`}
+                  >
+                    {tx.type === 'Deposit' ? (
+                      <ArrowDownCircle className="w-4 h-4 text-emerald-600" />
+                    ) : tx.type === 'Withdrawal' ? (
+                      <ArrowUpCircle className="w-4 h-4 text-red-600" />
+                    ) : (
+                      <Activity className="w-4 h-4 text-purple-600" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-gray-900 font-medium">{tx.type}</p>
+                    <p className="text-gray-500 text-sm">
+                      {tx.date} at {tx.time}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-gray-900 font-medium">{tx.type}</p>
-                  <p className="text-gray-500 text-sm">
-                    {tx.date} at {tx.time}
+                <div className="text-right">
+                  <p
+                    className={`font-semibold ${tx.amount > 0 ? 'text-emerald-600' : 'text-red-600'}`}
+                  >
+                    {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount).toLocaleString()}
                   </p>
+                  <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(tx.status)}`}>
+                    {tx.status}
+                  </span>
                 </div>
               </div>
-              <div className="text-right">
-                <p
-                  className={`font-semibold ${
-                    tx.amount > 0 ? 'text-emerald-600' : 'text-red-600'
-                  }`}
-                >
-                  {tx.amount > 0 ? '+' : ''}₦{Math.abs(tx.amount).toLocaleString()}
-                </p>
-                <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(tx.status)}`}>
-                  {tx.status}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm">No recent transactions available.</p>
+          )}
         </div>
       </div>
     </div>
@@ -332,11 +516,10 @@ export default function ModernDashboard() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${
-                activeTab === item.id
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${activeTab === item.id
                   ? 'bg-purple-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+                }`}
             >
               <item.icon className="w-4 h-4" />
               <span className="text-sm">{item.label}</span>
@@ -361,11 +544,10 @@ export default function ModernDashboard() {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                    activeTab === item.id
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${activeTab === item.id
                       ? 'bg-purple-50 text-purple-700 border border-purple-200'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-5 h-5" />
                   <span className="font-medium">{item.label}</span>

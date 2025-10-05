@@ -22,7 +22,7 @@ export function requireAuth(redirectTo: string = "/login"): AuthResult {
 /**
  * ✅ Check if user has allowed role(s).
  */
-export function requireRole(allowedRoles: string[]): AuthResult {
+export function requireRole(allowedRoles: string[], p0: { name: string; email: string; }): AuthResult {
   const user = getUser();
 
   if (!user) {

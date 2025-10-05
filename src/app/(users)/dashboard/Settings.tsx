@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { requireRole } from "@/lib/auth/checkAuth";
 import { KeyRound, Shield, Paintbrush, Bell, Mail, Smartphone, Lock, Eye, EyeOff, Trash2, Globe, MessageSquare, Activity } from 'lucide-react';
 
 export default function Settings() {

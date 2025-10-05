@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { requireRole } from "@/lib/auth/checkAuth";
 import { ArrowDownCircle, ArrowUpCircle, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Transaction, Status } from '@/lib/profileType';
 import { transactions } from '@/lib/profileData';

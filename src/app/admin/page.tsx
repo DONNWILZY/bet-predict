@@ -6,7 +6,10 @@ import { requireRole } from "@/lib/auth/checkAuth";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const auth = requireRole(["ADMIN", "SUPERADMIN"]);
+  const auth = requireRole(["ADMIN", "SUPERADMIN"], {
+    name: '',
+    email: '',
+  });
 
   useEffect(() => {
     if (!auth.isAuthenticated && auth.redirect) router.push(auth.redirect);

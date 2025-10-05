@@ -1,4 +1,7 @@
 "use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { requireRole } from "@/lib/auth/checkAuth";
 import React, { useState } from 'react';
 import { Plus, Target, Calendar, TrendingUp, Eye, MousePointer, DollarSign, Users, ChevronDown, ChevronUp, X } from 'lucide-react';
 import {

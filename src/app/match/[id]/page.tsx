@@ -16,6 +16,7 @@ import {
   Target
 } from "lucide-react";
 
+import { Navbar } from "../.././(home)/navbar";
 interface MatchPageProps {
   params: { id: string };
 }
@@ -142,6 +143,7 @@ export default function MatchPage({ params }: MatchPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50">
+      <Navbar />
       <div className="max-w-7xl mx-auto p-4 lg:p-8">
         {/* Main Tabs */}
         <div className="bg-white border border-gray-200 rounded-2xl mb-6 shadow-sm overflow-hidden">

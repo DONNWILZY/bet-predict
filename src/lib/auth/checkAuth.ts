@@ -1,15 +1,11 @@
-//src\lib\auth-helpers.ts
-
-import { getUser } from "./authMiddleware";
-export type Role = "USER" | "ADMIN" | "SUPERADMIN";
+// src/lib/auth/checkAuth.ts
+import { getUser } from "./storage";
 
 export interface AuthResult {
   isAuthenticated: boolean;
   user: any | null;
-  // Full-page redirect (e.g., not logged in → /login)
-  redirect?: string;
-  // Indicates logged in but unauthorized for this resource
-  unauthorized?: boolean;
+  redirect?: string;     // for full-page redirect
+  unauthorized?: boolean; // for unauthorized pages
 }
 
 /**
@@ -24,23 +20,27 @@ export function requireAuth(redirectTo: string = "/login"): AuthResult {
 }
 
 /**
- * ✅ Check if user has the right role.
+ * ✅ Check if user has allowed role(s).
  */
-export function requireRole(allowedRoles: Role[]): AuthResult {
+export function requireRole(allowedRoles: string[]): AuthResult {
   const user = getUser();
 
   if (!user) {
-    // Not logged in → redirect to login
     return { isAuthenticated: false, user: null, redirect: "/login" };
   }
 
   if (!allowedRoles.includes(user.role)) {
-    // Logged in but wrong role
     return { isAuthenticated: true, user, unauthorized: true };
   }
 
   return { isAuthenticated: true, user };
 }
+
+
+
+
+
+
 
 
 

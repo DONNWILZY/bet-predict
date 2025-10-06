@@ -13,7 +13,12 @@ import {
   ArrowRight,
   Target,
   Activity,
-  Trophy
+  Trophy,
+  DollarSign,
+  Home,
+  Handshake,
+  Info,
+  Phone,
 } from "lucide-react";
 
 export const Navbar = () => {
@@ -21,12 +26,35 @@ export const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const NavbarItems = [
-    { href: "/", label: "Home", icon: <Zap className="w-4 h-4" /> },
-    { href: "/predictions", label: "Predictions", icon: <Target className="w-4 h-4" /> },
-    { href: "/live", label: "Live", icon: <Activity className="w-4 h-4" /> },
-    { href: "/analytics", label: "Analytics", icon: <Trophy className="w-4 h-4" /> },
-  ];
+ const NavbarItems = [
+    // 1. Home
+    // Use 'Home' for the main landing page link.
+    { href: "/", label: "Home", icon: <Home className="w-4 h-4" /> }, 
+    
+    // 2. Predictions
+    // 'Target' or 'Bullseye' works well for predictions/forecasts.
+    { href: "/predictions", label: "Predictions", icon: <Target className="w-4 h-4" /> }, 
+    
+    // 3. Match
+    // Use 'Trophy' or 'Activity' (which you had) for sports/competition. 'Swords' or 'Gamepad' are also options.
+    { href: "/match", label: "Match", icon: <Trophy className="w-4 h-4" /> }, 
+    
+    // 4. Pricing / Plans
+    // Use 'DollarSign', 'CreditCard', or 'Gem' (for premium plans).
+    { href: "/plan", label: "Pricing", icon: <DollarSign className="w-4 h-4" /> }, 
+    
+    // 5. Services
+    // Use 'Handshake', 'ShieldCheck' (for protection/delivery), or 'Gem'.
+    { href: "/services", label: "Services", icon: <Handshake className="w-4 h-4" /> }, 
+    
+    // 6. About Us
+    // Use 'Info' or 'Users'.
+    { href: "/about ", label: "About Us", icon: <Info className="w-4 h-4" /> }, 
+    
+    // 7. Contact Us (If you decide to enable it)
+    // Use 'Phone', 'Mail', or 'MessageSquare'.
+    // { href: "/contact ", label: "Contact Us", icon: <Phone className="w-4 h-4" /> }, 
+];
 
   useEffect(() => {
     const handleScroll = () => {

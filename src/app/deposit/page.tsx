@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Upload, CreditCard, Wallet, AlertCircle, CheckCircle } from "lucide-react";
+import { Navbar } from "./../(home)/navbar"; 
+import {Footer} from "../../components/ui/Footer";
 // Removed: import { PaystackButton } from "react-paystack";
 
 // Add global declaration for PaystackPop
@@ -83,8 +85,11 @@ export default function DepositPage() {
   };
 
   if (success) {
-    return (
+    return 
+    
+    (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <Navbar />
         <div className="bg-white border border-gray-200 rounded-2xl p-8 max-w-md w-full text-center shadow-lg">
           <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-10 h-10 text-emerald-600" />
@@ -244,6 +249,7 @@ export default function DepositPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

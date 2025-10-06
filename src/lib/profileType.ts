@@ -14,9 +14,9 @@ export interface Bio {
   gender: string;
   interests: string[];
   occupation: string;
-  profilePicture?: File | null;
+  profilePicture?: File | null; // <-- OPTIONAL
   interest: string[]; 
- 
+  userName: string;             // <-- REQUIRED
 }
 
 
@@ -34,8 +34,8 @@ export interface KycDetails {
   userId: string;
   type: string;
   number: string;
-  status: Status;
-  document: File | null;
+  status: Status | string;
+  document: string | File | null;
   note?: string; // Add note for decline or other info
 }
 

@@ -247,17 +247,21 @@ export default function Profile({
       try {
         const profile = await fetchUserProfile();
         setBio({
-          name: profile.name || '',
-          email: profile.email || '',
-          phone: profile.phone || '',
-          dateOfBirth: profile.dateOfBirth || '',
-          location: profile.location || '',
-          bio: profile.bio || '',
-          gender: profile.gender || '',
-          occupation: profile.occupation || '',
-          interests: profile.interests || profile.interest || [],
-          interest: profile.interest || profile.interests || [],
-        });
+          name: profile.name || '',
+          email: profile.email || '',
+          phone: profile.phone || '',
+          dateOfBirth: profile.dateOfBirth || '',
+          location: profile.location || '',
+          bio: profile.bio || '',
+          gender: profile.gender || '',
+          occupation: profile.occupation || '',
+          interests: profile.interests || profile.interest || [],
+          interest: profile.interest || profile.interests || [],
+          // 💥 FIX: ADD userName from the fetched profile
+          userName: profile.userName || '', 
+        });
+
+
         setBankDetails({
           id: profile.bankDetails.id || '',
           userId: profile.bankDetails.userId || '',
@@ -284,27 +288,29 @@ export default function Profile({
     loadProfile();
   }, [setBio, setBankDetails, setKycDetails, setKycStatus]);
 
-  const handleSaveProfile = async () => {
-    try {
-      const updatedProfile = await updateUserBio(bio);
-      setBio({
-        name: updatedProfile.name || bio.name,
-        email: updatedProfile.email || bio.email,
-        phone: updatedProfile.phone || bio.phone,
-        dateOfBirth: updatedProfile.dateOfBirth || bio.dateOfBirth,
-        location: updatedProfile.location || bio.location,
-        bio: updatedProfile.bio || bio.bio,
-        gender: updatedProfile.gender || bio.gender,
-        occupation: updatedProfile.occupation || bio.occupation,
-        interests: updatedProfile.interests || updatedProfile.interest || bio.interests,
-        interest: updatedProfile.interest || updatedProfile.interests || bio.interest,
-      });
-      setIsEditingProfile(false);
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Failed to save profile:", error);
-    }
-  };
+const handleSaveProfile = async () => {
+    try {
+      const updatedProfile = await updateUserBio(bio);
+      setBio({
+        name: updatedProfile.name || bio.name,
+        email: updatedProfile.email || bio.email,
+        phone: updatedProfile.phone || bio.phone,
+        dateOfBirth: updatedProfile.dateOfBirth || bio.dateOfBirth,
+        location: updatedProfile.location || bio.location,
+        bio: updatedProfile.bio || bio.bio,
+        gender: updatedProfile.gender || bio.gender,
+        occupation: updatedProfile.occupation || bio.occupation,
+        interests: updatedProfile.interests || updatedProfile.interest || bio.interests,
+        interest: updatedProfile.interest || updatedProfile.interests || bio.interest,
+        // 💥 FIX: ADD userName from the current state (it shouldn't be null)
+        userName: bio.userName, 
+      });
+      setIsEditingProfile(false);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save profile:", error);
+    }
+  };
 
   const handleSaveBank = async () => {
     try {

@@ -278,7 +278,7 @@ export default function MatchesPage() {
 
                 {/* Quick Action */}
                 <button className="w-full mt-2 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs font-medium transition-colors">
-                  View Prediction
+                  View Details
                 </button>
               </div>
             </Link>

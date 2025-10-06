@@ -274,8 +274,9 @@ export default function Profile({
           status: profile.kycDetails.status || '',
           note: profile.kycDetails.note || '',
         });
-        setKycStatus(profile.kyc.status || 'Pending');
-        setUserRole(profile.isCreator ? 'Creator' : (profile.role || 'User').charAt(0).toUpperCase() + (profile.role || 'User').slice(1));
+        setKycStatus(profile.kyc.status);
+        setUserRole(profile.isCreator ? 'Creator' : (profile.role).charAt(0).toUpperCase() + (profile.role || 'User').slice(1));
+        console.log("Profile loaded:", profile.isCreator);
       } catch (error) {
         console.error("Failed to load profile:", error);
       }

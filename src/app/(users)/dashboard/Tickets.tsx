@@ -20,22 +20,7 @@ export default function Tickets({ ticketTab, setTicketTab, getStatusColor }: Tic
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  useEffect(() => {
-    // 1️⃣ Authentication check → redirect if not logged in
-    const auth = requireAuth();
-    if (auth.redirect) {
-      router.replace(auth.redirect);
-      return;
-    }
-
-    // 2️⃣ Role check → only allow USERs to view tickets
-    const roleCheck = requireRole(["USER"]);
-    if (roleCheck.unauthorized) {
-      alert("❌ You are not authorized to view tickets!");
-      router.replace("/unauthorized");
-      return;
-    }
-  }, [router]);
+ 
 
   // Reset to page 1 when switching tabs
   useEffect(() => {

@@ -172,7 +172,7 @@ export default function ModernDashboard() {
   const [ticketTab, setTicketTab] = useState<'my' | 'purchased'>('my');
   const [transactions, setTransactions] = useState<TransactionType[]>([]);
 
-  const isPredictor = true;
+  const isCreator = true;
 
   // Fetch profile and transactions on mount
   useEffect(() => {
@@ -180,21 +180,21 @@ export default function ModernDashboard() {
       try {
         // Fetch profile data
         const profile = await fetchUserProfile();
-        setKycStatus(profile.kyc.status || 'Pending');
+        setKycStatus(profile.kyc.status);
         setWallet({
           id: profile.wallet.id,
           userId: profile.wallet.userId,
-          balance: profile.wallet.balance,
-          earning: profile.wallet.earning,
+          balance: profile.wallet.balance || 0,
+          earning: profile.wallet.earning || 0,
           points: profile.wallet.points || 0,
         });
         setBio({
-          name: profile.name || defaultBio.name,
-          phone: profile.phone || defaultBio.phone,
-          dateOfBirth: profile.dateOfBirth || defaultBio.dateOfBirth,
-          location: profile.location || defaultBio.location,
-          bio: profile.bio || defaultBio.bio,
-          gender: profile.gender || defaultBio.gender,
+          name: profile.name ,
+          phone: profile.phone ,
+          dateOfBirth: profile.dateOfBirth ,
+          location: profile.location ,
+          bio: profile.bio ,
+          gender: profile.gender ,
           occupation: profile.occupation || defaultBio.occupation,
           interests: profile.interests || defaultBio.interests,
           email: profile.email || defaultBio.email,
@@ -228,7 +228,7 @@ export default function ModernDashboard() {
           console.error("Failed to load data:", error);
         }
         // Use default values as fallback
-        setKycStatus('Pending');
+        setKycStatus('PENDING');
         setWallet(defaultWallet);
         setBio(defaultBio);
         setBankDetails(defaultBankDetails);
@@ -240,22 +240,32 @@ export default function ModernDashboard() {
   }, []);
 
   const getStatusColor = (status: Status): string => {
-    const colors: Record<Status, string> = {
-      Completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Pending: 'bg-amber-50 text-amber-700 border-amber-200',
-      Failed: 'bg-red-50 text-red-700 border-red-200',
-      Won: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Lost: 'bg-red-50 text-red-700 border-red-200',
-      Active: 'bg-purple-50 text-purple-700 border-purple-200',
-      Expired: 'bg-gray-50 text-gray-600 border-gray-200',
-      APPROVED: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      DECLINED: "bg-red-50 text-red-700 border-red-200",
-      Declined: "bg-red-50 text-red-700 border-red-200",
-      Reviewing: "bg-amber-50 text-amber-700 border-amber-200",
-      REVIEWING: "bg-amber-50 text-amber-700 border-amber-200",
-      PENDING: "bg-amber-50 text-amber-700 border-amber-200"
-    };
+const colors: Record<Status, string> = {
+    // --- General Process States ---
+    Completed: 'bg-green-50 text-green-700 border-green-200',  // Use 'green' for final, successful completion
+    Pending: 'bg-amber-50 text-amber-700 border-amber-200',    // Standard warning/waiting color
+    Failed: 'bg-red-50 text-red-700 border-red-200',          // Standard error/negative color
+    Active: 'bg-blue-50 text-blue-700 border-blue-200',        // Use blue for general ongoing activity
+
+    // --- Win/Loss (Betting/Game) States ---
+    Won: 'bg-emerald-50 text-emerald-800 border-emerald-300',  // Slight shift for high-value win (Emerald is vibrant)
+    Lost: 'bg-red-50 text-red-700 border-red-200',
+    
+    // --- Lifecycle/Other States ---
+    Expired: 'bg-gray-100 text-gray-700 border-gray-300',     // Slightly darker gray for better visibility/de-emphasis
+    
+    // --- Approval/Review States (Consistent Case-Insensitive Mapping) ---
+    APPROVED: 'bg-green-50 text-green-700 border-green-200',
+    Approved: "bg-green-50 text-green-700 border-green-200",
+    
+    DECLINED: "bg-red-50 text-red-700 border-red-200",
+    Declined: "bg-red-50 text-red-700 border-red-200",
+    
+    Reviewing: "bg-yellow-50 text-yellow-700 border-yellow-200", // Using yellow for clear "in progress"
+    REVIEWING: "bg-yellow-50 text-yellow-700 border-yellow-200",
+    
+    PENDING: "bg-amber-50 text-amber-700 border-amber-200"
+};
     return colors[status] || 'bg-gray-50 text-gray-600 border-gray-200';
   };
 
@@ -350,9 +360,16 @@ export default function ModernDashboard() {
                   ₦{wallet.earning.toLocaleString()}
                 </span>
               </span>
+               <span className="text-gray-600">
+                Points:{' '}
+                <span className="text-emerald-600 font-semibold">
+                  {(wallet.points)}
+                </span>
+              </span>
               <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(kycStatus)}`}>
                 KYC {kycStatus}
               </span>
+             
             </div>
           </div>
         </div>

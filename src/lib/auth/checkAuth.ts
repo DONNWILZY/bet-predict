@@ -9,7 +9,7 @@ export interface AuthResult {
 }
 
 /**
- * ✅ Check if user is logged in.
+ *  Check if user is logged in.
  */
 export function requireAuth(redirectTo: string = "/login"): AuthResult {
   const user = getUser();
@@ -20,7 +20,7 @@ export function requireAuth(redirectTo: string = "/login"): AuthResult {
 }
 
 /**
- * ✅ Check if user has allowed role(s).
+ *  Check if user has allowed role(s).
  */
 export function requireRole(allowedRoles: string[], p0: { name: string; email: string; }): AuthResult {
   const user = getUser();

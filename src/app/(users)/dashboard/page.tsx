@@ -3,25 +3,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { requireRole } from "@/lib/auth/checkAuth";
 import {
-  User,
-  FileText,
-  ShieldCheck,
-  CreditCard,
-  History,
+  Bell,
   ArrowDownCircle,
   ArrowUpCircle,
   Settings as SettingsIcon,
   LogOut,
   LayoutDashboard,
   MoreHorizontal,
-  Bell,
-  TrendingUp,
-  Award,
   Activity,
-  EyeOff,
-  Plus,
-  LifeBuoy,
   Eye,
+  EyeOff,
+  LifeBuoy,
 } from 'lucide-react';
 import {
   Bio,
@@ -29,9 +21,6 @@ import {
   KycDetails,
   Wallet,
   Transaction as TransactionType,
-  Ticket,
-  Subscription,
-  NavItem,
   Status,
 } from '@/lib/profileType';
 import { navItems } from '@/lib/profileData';
@@ -43,7 +32,7 @@ import Tickets from './Tickets';
 import SubscriptionComponent from './Subscription';
 
 const ACCESS_TOKEN_KEY = "accessToken";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function fetchUserProfile() {
   try {
@@ -53,6 +42,7 @@ async function fetchUserProfile() {
       throw new Error("Access token not found");
     }
 
+    // FIX: Removed duplicate /api
     const response = await fetch(`${API_URL}/api/user/profile`, {
       method: "GET",
       headers: {
@@ -125,31 +115,23 @@ export default function ModernDashboard() {
     email: '',
   });
 
-  useEffect(() => {
-    if (!auth.isAuthenticated && auth.redirect) router.push(auth.redirect);
-    if (auth.unauthorized) router.push("/unauthorized");
-  }, [auth, router]);
-
-  if (auth.unauthorized) return null;
-  if (!auth.isAuthenticated) return null;
-
+  // FIX: Initialize with null and use mounted state to prevent hydration mismatch
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [showBalance, setShowBalance] = useState(true);
-const [bio, setBio] = useState<Bio>({
-  name: '',
-  email: '',
-  phone: '',
-  dateOfBirth: '',
-  location: '',
-  bio: '',
-  gender: '',
-  occupation: '',
-  interests: [],
-  interest: [],
-  
-  // FIX: Add the missing 'userName' property
-  userName: '', 
-});
+  const [bio, setBio] = useState<Bio>({
+    name: '',
+    email: '',
+    phone: '',
+    dateOfBirth: '',
+    location: '',
+    bio: '',
+    gender: '',
+    occupation: '',
+    interests: [],
+    interest: [],
+    userName: '', 
+  });
   const [kycStatus, setKycStatus] = useState<Status>('PENDING');
   const [bankDetails, setBankDetails] = useState<BankDetails>({
     id: '',
@@ -182,7 +164,15 @@ const [bio, setBio] = useState<Bio>({
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
 
-  const isCreator = true;
+  // FIX: Set mounted state to prevent hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!auth.isAuthenticated && auth.redirect) router.push(auth.redirect);
+    if (auth.unauthorized) router.push("/unauthorized");
+  }, [auth, router]);
 
   useEffect(() => {
     async function loadData() {
@@ -192,7 +182,6 @@ const [bio, setBio] = useState<Bio>({
 
         const profile = await fetchUserProfile();
         
-        // Set user name and email from API
         setUserName(profile.name || '');
         setUserEmail(profile.email || '');
         
@@ -206,21 +195,19 @@ const [bio, setBio] = useState<Bio>({
           points: profile.wallet?.points || 0,
         });
         
-      setBio({
-  name: profile.name || '',
-  phone: profile.phone || '',
-  dateOfBirth: profile.dateOfBirth || '',
-  location: profile.location || '',
-  bio: profile.bio || '',
-  gender: profile.gender || '',
-  occupation: profile.occupation || '',
-  interests: profile.interests || [],
-  email: profile.email || '',
-  interest: profile.interests || [],
-  
-  // 💥 FIX: Add the required 'userName' property
-  userName: profile.userName || '', // Use the value from your profile object
-});
+        setBio({
+          name: profile.name || '',
+          phone: profile.phone || '',
+          dateOfBirth: profile.dateOfBirth || '',
+          location: profile.location || '',
+          bio: profile.bio || '',
+          gender: profile.gender || '',
+          occupation: profile.occupation || '',
+          interests: profile.interests || [],
+          email: profile.email || '',
+          interest: profile.interests || [],
+          userName: profile.userName || '',
+        });
 
         if (profile.bankDetails) {
           setBankDetails({
@@ -254,8 +241,20 @@ const [bio, setBio] = useState<Bio>({
         setLoading(false);
       }
     }
-    loadData();
-  }, []);
+    
+    // Only load data after component is mounted
+    if (mounted) {
+      loadData();
+    }
+  }, [mounted]);
+
+  // FIX: Don't render until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return null;
+  }
+
+  if (auth.unauthorized) return null;
+  if (!auth.isAuthenticated) return null;
 
   const getStatusColor = (status: Status): string => {
     const colors: Record<Status, string> = {
@@ -448,26 +447,21 @@ const [bio, setBio] = useState<Bio>({
       case 'overview':
         return renderOverview();
       case 'profile':
-  return (
-    <Profile
-      bio={bio}
-      setBio={setBio}
-      kycStatus={kycStatus}
-      setKycStatus={setKycStatus}
-      bankDetails={bankDetails}
-      setBankDetails={setBankDetails}
-      kycDetails={kycDetails}
-      setKycDetails={setKycDetails}
-      isEditing={isEditing}
-      setIsEditing={setIsEditing}
-      getStatusColor={getStatusColor}
-      
-
-      // userName={userName} 
-      
-      // userEmail={userEmail}
-    />
-  );
+        return (
+          <Profile
+            bio={bio}
+            setBio={setBio}
+            kycStatus={kycStatus}
+            setKycStatus={setKycStatus}
+            bankDetails={bankDetails}
+            setBankDetails={setBankDetails}
+            kycDetails={kycDetails}
+            setKycDetails={setKycDetails}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            getStatusColor={getStatusColor}
+          />
+        );
       case 'tickets':
         return <Tickets ticketTab={ticketTab} setTicketTab={setTicketTab} getStatusColor={getStatusColor} />;
       case 'transactions':

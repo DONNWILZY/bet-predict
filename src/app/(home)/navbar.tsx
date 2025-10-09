@@ -28,11 +28,11 @@ export const Navbar = () => {
 
   const NavbarItems = [
     { href: "/", label: "Home", icon: <Home className="w-4 h-4" /> },
-    { href: "/predictions", label: "Predictions", icon: <Target className="w-4 h-4" /> },
+    { href: "/premium", label: "Predictions", icon: <Target className="w-4 h-4" /> },
     { href: "/match", label: "Match", icon: <Trophy className="w-4 h-4" /> },
     { href: "/plan", label: "Pricing", icon: <DollarSign className="w-4 h-4" /> },
     { href: "/services", label: "Services", icon: <Handshake className="w-4 h-4" /> },
-    { href: "/about", label: "About Us", icon: <Info className="w-4 h-4" /> },
+    { href: "/blog", label: "blog", icon: <Info className="w-4 h-4" /> },
   ];
 
   useEffect(() => {

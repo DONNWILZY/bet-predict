@@ -17,16 +17,17 @@ import {
 } from "lucide-react";
 
 import { Navbar } from "../.././(home)/navbar";
+
 interface MatchPageProps {
   params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 export default function MatchPage({ params }: MatchPageProps) {
-  const [activeTab, setActiveTab] = useState("details");
+ const [activeTab, setActiveTab] = useState("details");
   const [predictionTab, setPredictionTab] = useState("1x2");
   const [headToHeadLeague, setHeadToHeadLeague] = useState("all");
   const [teamStatsTab, setTeamStatsTab] = useState("team1");
-
   // Mock Data
   const match = {
     team1: {

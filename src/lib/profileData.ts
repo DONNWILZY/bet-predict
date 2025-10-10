@@ -20,25 +20,34 @@ export const defaultBio: Bio = {
   bio: 'Passionate sports predictor with 5+ years of experience in football analytics.',
   gender: 'Male',
   occupation: 'Sports Analyst',
-  interest: ['Football', 'Technology', 'Reading']
+  interest: ['Football', 'Technology', 'Reading'],
+  userName: 'gods_will',
+  interests: []
 };
 
 export const defaultBankDetails: BankDetails = {
   bankName: 'First Bank of Nigeria',
   accountName: 'GODSWILL EFFIONG',
   accountNumber: '1234567890',
-
+  id: '',
+  userId: ''
 };
 
 export const defaultKycDetails: KycDetails = {
   type: '',
   number: '',
   document: null,
+  id: '',
+  userId: '',
+  status: ''
 };
 
 export const defaultWallet: Wallet = {
   balance: 125000,
   earning: 15750,
+  id: '',
+  userId: '',
+  points: 0
 };
 
 export const transactions: Transaction[] = [
